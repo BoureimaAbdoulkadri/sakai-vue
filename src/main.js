@@ -6,6 +6,7 @@ import Aura from '@primeuix/themes/aura';
 import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from 'primevue/toastservice';
+import i18n from './i18n';
 
 import '@/assets/tailwind.css';
 import '@/assets/styles.scss';
@@ -23,5 +24,6 @@ app.use(PrimeVue, {
 });
 app.use(ToastService);
 app.use(ConfirmationService);
+app.use(i18n);
 
 app.mount('#app');

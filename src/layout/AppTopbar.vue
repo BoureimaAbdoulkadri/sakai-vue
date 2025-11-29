@@ -1,6 +1,7 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
 import AppConfigurator from './AppConfigurator.vue';
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue';
 
 const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
 </script>
@@ -60,6 +61,7 @@ const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
 
             <div class="layout-topbar-menu hidden lg:block">
                 <div class="layout-topbar-menu-content">
+                    <LanguageSwitcher />
                     <button type="button" class="layout-topbar-action">
                         <i class="pi pi-calendar"></i>
                         <span>Calendar</span>

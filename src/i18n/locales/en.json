@@ -1,0 +1,32 @@
+{
+  "app": {
+    "title": "EDO Admin"
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "catalog": "Catalog",
+    "products": "Products",
+    "categories": "Categories",
+    "sales": "Sales",
+    "orders": "Orders",
+    "customers": "Customers",
+    "marketing": "Marketing",
+    "coupons": "Coupons",
+    "content": "Content",
+    "banners": "Banners",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "todayOrders": "Today's orders",
+    "todayRevenue": "Today's revenue",
+    "monthOrders": "Monthly orders",
+    "monthRevenue": "Monthly revenue",
+    "orders7days": "Orders over last 7 days",
+    "revenue7days": "Revenue over last 7 days"
+  },
+  "common": {
+    "refresh": "Refresh",
+    "currency": "Currency",
+    "add": "Add"
+  }
+}
