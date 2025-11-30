@@ -11,6 +11,7 @@
         "@primeuix/themes": "^1.0.0",
         "axios": "^1.13.2",
         "chart.js": "3.3.2",
+        "pinia": "^2.3.1",
         "primeicons": "^7.0.0",
         "primevue": "^4.3.1",
         "tailwindcss-primeui": "^0.5.0",

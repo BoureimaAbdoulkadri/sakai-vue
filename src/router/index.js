@@ -1,6 +1,7 @@
 import AppLayout from '@/layout/AppLayout.vue';
 import Landing from '@/views/pages/Landing.vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -15,6 +16,7 @@ const router = createRouter({
         {
             path: '/admin',
             component: AppLayout,
+            meta: { requiresAdmin: true },
             children: [
                 {
                     path: 'dashboard',
@@ -65,6 +67,11 @@ const router = createRouter({
             component: () => import('@/views/pages/auth/Login.vue')
         },
         {
+            path: '/auth/register',
+            name: 'register',
+            component: () => import('@/views/pages/auth/Register.vue')
+        },
+        {
             path: '/auth/access',
             name: 'accessDenied',
             component: () => import('@/views/pages/auth/Access.vue')
@@ -80,6 +87,34 @@ const router = createRouter({
             component: () => import('@/views/pages/NotFound.vue')
         }
     ]
+});
+
+router.beforeEach(async (to, from, next) => {
+    const requiresAdmin = to.matched.some((record) => record.meta?.requiresAdmin);
+
+    if (!requiresAdmin) {
+        return next();
+    }
+
+    const authStore = useAuthStore();
+
+    if (!authStore.isAuthenticated) {
+        return next({ path: '/auth/login', query: { redirect: to.fullPath } });
+    }
+
+    if (!authStore.user) {
+        try {
+            await authStore.fetchMe();
+        } catch (error) {
+            return next({ path: '/auth/login', query: { redirect: to.fullPath } });
+        }
+    }
+
+    if (!authStore.isAdmin) {
+        return next({ path: '/auth/login' });
+    }
+
+    return next();
 });
 
 export default router;
