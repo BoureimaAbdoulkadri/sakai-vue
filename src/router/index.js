@@ -21,42 +21,42 @@ const router = createRouter({
                 {
                     path: 'dashboard',
                     name: 'admin-dashboard',
-                    component: () => import('@/views/dashboard/Dashboard.vue')
+                    component: () => import('@/views/admin/dashboard/Dashboard.vue')
                 },
                 {
                     path: 'catalog/products',
                     name: 'admin-catalog-products',
-                    component: () => import('@/views/catalog/Products.vue')
+                    component: () => import('@/views/admin/catalog/Products.vue')
                 },
                 {
                     path: 'catalog/categories',
                     name: 'admin-catalog-categories',
-                    component: () => import('@/views/catalog/Categories.vue')
+                    component: () => import('@/views/admin/catalog/Categories.vue')
                 },
                 {
                     path: 'sales/orders',
                     name: 'admin-sales-orders',
-                    component: () => import('@/views/sales/Orders.vue')
+                    component: () => import('@/views/admin/sales/Orders.vue')
                 },
                 {
                     path: 'customers',
                     name: 'admin-customers',
-                    component: () => import('@/views/customers/Customers.vue')
+                    component: () => import('@/views/admin/customers/Customers.vue')
                 },
                 {
                     path: 'marketing/coupons',
                     name: 'admin-marketing-coupons',
-                    component: () => import('@/views/marketing/Coupons.vue')
+                    component: () => import('@/views/admin/marketing/Coupons.vue')
                 },
                 {
                     path: 'cms/banners',
                     name: 'admin-cms-banners',
-                    component: () => import('@/views/cms/Banners.vue')
+                    component: () => import('@/views/admin/cms/Banners.vue')
                 },
                 {
                     path: 'settings',
                     name: 'admin-settings',
-                    component: () => import('@/views/settings/Settings.vue')
+                    component: () => import('@/views/admin/settings/Settings.vue')
                 }
             ]
         },
