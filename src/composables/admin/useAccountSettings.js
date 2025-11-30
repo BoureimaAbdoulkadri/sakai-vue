@@ -8,7 +8,6 @@ export function useAccountSettings() {
     const loading = ref(false);
     const saving = ref(false);
     const loaded = ref(false);
-    const isDirty = ref(false);
 
     const form = reactive({
         name: '',
@@ -43,13 +42,15 @@ export function useAccountSettings() {
         { label: 'UTC', value: 'UTC' }
     ];
 
-    const canSave = computed(() => !loading.value && !saving.value && isDirty.value);
+    const isDirty = ref(false);
 
     function markDirty() {
-        if (!isDirty.value && loaded.value) {
+        if (loaded.value) {
             isDirty.value = true;
         }
     }
+
+    const canSave = computed(() => !loading.value && !saving.value && isDirty.value);
 
     async function loadSettings() {
         loading.value = true;
@@ -87,6 +88,10 @@ export function useAccountSettings() {
     }
 
     async function saveSettings() {
+        if (!canSave.value) {
+            return;
+        }
+
         saving.value = true;
 
         const payload = {
@@ -108,6 +113,7 @@ export function useAccountSettings() {
         try {
             const updated = await updateAccountSettings(payload);
 
+            // resync si le backend modifie des choses
             form.name = updated.name ?? form.name;
             form.slug = updated.slug ?? form.slug;
             form.contact_email = updated.contact_email ?? form.contact_email;
@@ -154,10 +160,9 @@ export function useAccountSettings() {
         localeOptions,
         currencyOptions,
         timezoneOptions,
-        canSave,
         isDirty,
+        canSave,
         markDirty,
-        loadSettings,
         saveSettings
     };
 }
