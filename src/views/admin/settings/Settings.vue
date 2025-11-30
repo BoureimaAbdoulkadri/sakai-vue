@@ -1,3 +1,27 @@
+<script setup>
+import { useAccountSettings } from '@/composables/admin/useAccountSettings';
+import InputText from 'primevue/inputtext';
+import Select from 'primevue/select';
+import InputSwitch from 'primevue/inputswitch';
+import Button from 'primevue/button';
+import Card from 'primevue/card';
+import ColorPicker from 'primevue/colorpicker';
+import Skeleton from 'primevue/skeleton';
+
+const {
+    loading,
+    saving,
+    form,
+    localeOptions,
+    currencyOptions,
+    timezoneOptions,
+    isDirty,
+    canSave,
+    markDirty,
+    saveSettings
+} = useAccountSettings();
+</script>
+
 <template>
     <div class="grid">
         <div class="col-12">
@@ -206,30 +230,6 @@
         </div>
     </div>
 </template>
-
-<script setup>
-import { useAccountSettings } from '@/composables/admin/useAccountSettings';
-import InputText from 'primevue/inputtext';
-import Select from 'primevue/select';
-import InputSwitch from 'primevue/inputswitch';
-import Button from 'primevue/button';
-import Card from 'primevue/card';
-import ColorPicker from 'primevue/colorpicker';
-import Skeleton from 'primevue/skeleton';
-
-const {
-    loading,
-    saving,
-    form,
-    localeOptions,
-    currencyOptions,
-    timezoneOptions,
-    isDirty,
-    canSave,
-    markDirty,
-    saveSettings
-} = useAccountSettings();
-</script>
 
 <style scoped>
 .card :deep(.p-inputtext),
