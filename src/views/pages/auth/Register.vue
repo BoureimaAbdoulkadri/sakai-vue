@@ -28,7 +28,6 @@ async function onRegister() {
     }
 
     try {
-        // TODO: connecter sur /api/auth/register lorsque disponible.
         await authStore.register({
             name: form.value.name,
             email: form.value.email,
@@ -36,9 +35,9 @@ async function onRegister() {
             password_confirmation: form.value.confirmPassword
         });
 
-        await router.push('/auth/login');
+        await router.push('/');
     } catch (error) {
-        errorMessage.value = 'Inscription impossible pour le moment.';
+        errorMessage.value = authStore.error ?? 'Inscription impossible.';
     } finally {
         submitting.value = false;
     }

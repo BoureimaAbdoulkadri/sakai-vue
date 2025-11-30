@@ -99,10 +99,26 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     async function register(payload) {
-        console.warn('TODO: connect register API when available', payload);
-        // Example implementation once the backend endpoint exists:
-        // const response = await http.post('/auth/register', payload);
-        // setAuth(response.data);
+        loading.value = true;
+        error.value = null;
+
+        try {
+            const response = await http.post('/auth/register', {
+                name: payload.name,
+                email: payload.email,
+                password: payload.password,
+                password_confirmation: payload.password_confirmation ?? payload.password
+            });
+
+            setAuth(response.data);
+        } catch (err) {
+            const message = err?.response?.data?.message ?? 'Registration failed';
+            error.value = message;
+            clearAuth();
+            throw err;
+        } finally {
+            loading.value = false;
+        }
     }
 
     return {
