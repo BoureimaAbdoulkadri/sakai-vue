@@ -1,9 +1,12 @@
 <script setup>
 import { computed } from 'vue';
 import { RouterLink, RouterView, useRoute } from 'vue-router';
+import { useCartStore } from '@/stores/cart';
 
 const route = useRoute();
 const showNavigation = computed(() => route.name !== 'landing');
+const cartStore = useCartStore();
+const cartCount = computed(() => cartStore.itemCount);
 </script>
 
 <template>
@@ -14,6 +17,17 @@ const showNavigation = computed(() => route.name !== 'landing');
                 <nav class="flex items-center gap-4 text-sm">
                     <RouterLink class="text-color hover:text-primary transition-colors" :to="{ name: 'landing' }">Accueil</RouterLink>
                     <RouterLink class="text-color hover:text-primary transition-colors" :to="{ name: 'client-catalog' }">Boutique</RouterLink>
+                    <RouterLink class="text-color hover:text-primary transition-colors" :to="{ name: 'client-cart' }">
+                        <span class="flex items-center gap-2">
+                            Panier
+                            <span
+                                v-if="cartCount > 0"
+                                class="inline-flex items-center justify-center text-xs font-semibold bg-primary text-white rounded-full px-2 py-0.5"
+                            >
+                                {{ cartCount }}
+                            </span>
+                        </span>
+                    </RouterLink>
                 </nav>
             </div>
         </header>

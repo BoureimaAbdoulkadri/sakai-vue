@@ -3,6 +3,7 @@ import App from './App.vue';
 import router from './router';
 import { createPinia } from 'pinia';
 import { useAuthStore } from '@/stores/auth';
+import { useClientAuthStore } from '@/stores/clientAuth';
 
 import Aura from '@primeuix/themes/aura';
 import PrimeVue from 'primevue/config';
@@ -34,6 +35,13 @@ const authStore = useAuthStore(pinia);
 if (authStore.token) {
     authStore.fetchMe().catch(() => {
         // Ignore errors at bootstrap; guard/flows will redirect if needed.
+    });
+}
+
+const clientAuthStore = useClientAuthStore(pinia);
+if (clientAuthStore.token) {
+    clientAuthStore.fetchMe().catch(() => {
+        // Ignore errors during bootstrap; router guard will redirect if necessary.
     });
 }
 

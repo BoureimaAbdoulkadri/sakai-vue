@@ -1,13 +1,27 @@
 <script setup>
-import { onMounted, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import Button from 'primevue/button';
 import Skeleton from 'primevue/skeleton';
 import Tag from 'primevue/tag';
+import InputNumber from 'primevue/inputnumber';
+import { useToast } from 'primevue/usetoast';
 import { useClientProductDetail } from '@/composables/client/useClientProductDetail';
+import { useCartStore } from '@/stores/cart';
 
 const route = useRoute();
 const { product, loading, loadProduct } = useClientProductDetail();
+const cartStore = useCartStore();
+const toast = useToast();
+const quantity = ref(1);
+
+const isOutOfStock = computed(() => {
+    if (!product.value || product.value.stock === null || product.value.stock === undefined) {
+        return false;
+    }
+
+    return Number(product.value.stock) <= 0;
+});
 
 function fetchProduct() {
     const slugParam = route.params.slug;
@@ -32,6 +46,23 @@ function formatPrice(value) {
     }
 
     return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(Number(value));
+}
+
+function addToCart() {
+    if (!product.value) {
+        return;
+    }
+
+    const qty = Math.max(1, Number(quantity.value) || 1);
+    cartStore.addItem(product.value, qty);
+    quantity.value = 1;
+
+    toast.add({
+        severity: 'success',
+        summary: 'Ajouté au panier',
+        detail: `${product.value.name} x${qty} a été ajouté au panier.`,
+        life: 3000
+    });
 }
 </script>
 
@@ -76,7 +107,17 @@ function formatPrice(value) {
                         </div>
                         <p class="text-muted-color leading-relaxed mb-6">{{ product.description || product.short_description }}</p>
                         <div class="flex flex-col sm:flex-row gap-3">
-                            <Button label="Ajouter au panier" icon="pi pi-shopping-cart" class="w-full sm:w-auto" />
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm text-muted-color">Quantité</span>
+                                <InputNumber v-model="quantity" :min="1" inputClass="w-6rem" />
+                            </div>
+                            <Button
+                                label="Ajouter au panier"
+                                icon="pi pi-shopping-cart"
+                                class="w-full sm:w-auto"
+                                :disabled="isOutOfStock"
+                                @click="addToCart"
+                            />
                             <Button label="Contacter" icon="pi pi-envelope" outlined class="w-full sm:w-auto" />
                         </div>
                         <div class="mt-6 text-sm text-muted-color">

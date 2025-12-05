@@ -3,6 +3,7 @@ import StorefrontLayout from '@/layout/StorefrontLayout.vue';
 import Landing from '@/views/pages/Landing.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import { useClientAuthStore } from '@/stores/clientAuth';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -26,6 +27,38 @@ const router = createRouter({
                     path: 'products/:slug',
                     name: 'client-product',
                     component: () => import('@/views/client/Product.vue')
+                },
+                {
+                    path: 'account/login',
+                    name: 'client-login',
+                    component: () => import('@/views/client/auth/ClientLogin.vue')
+                },
+                {
+                    path: 'account/register',
+                    name: 'client-register',
+                    component: () => import('@/views/client/auth/ClientRegister.vue')
+                },
+                {
+                    path: 'account/orders',
+                    name: 'client-orders',
+                    meta: { requiresClientAuth: true },
+                    component: () => import('@/views/client/account/Orders.vue')
+                },
+                {
+                    path: 'account/orders/:id',
+                    name: 'client-order-detail',
+                    meta: { requiresClientAuth: true },
+                    component: () => import('@/views/client/account/OrderDetail.vue')
+                },
+                {
+                    path: 'cart',
+                    name: 'client-cart',
+                    component: () => import('@/views/client/Cart.vue')
+                },
+                {
+                    path: 'checkout',
+                    name: 'client-checkout',
+                    component: () => import('@/views/client/Checkout.vue')
                 }
             ]
         },
@@ -108,27 +141,46 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     const requiresAdmin = to.matched.some((record) => record.meta?.requiresAdmin);
+    const requiresClient = to.matched.some((record) => record.meta?.requiresClientAuth);
 
-    if (!requiresAdmin) {
+    if (requiresAdmin) {
+        const authStore = useAuthStore();
+
+        if (!authStore.isAuthenticated) {
+            return next({ path: '/auth/login', query: { redirect: to.fullPath } });
+        }
+
+        if (!authStore.user) {
+            try {
+                await authStore.fetchMe();
+            } catch (error) {
+                return next({ path: '/auth/login', query: { redirect: to.fullPath } });
+            }
+        }
+
+        if (!authStore.isAdmin) {
+            return next({ path: '/auth/login' });
+        }
+
         return next();
     }
 
-    const authStore = useAuthStore();
+    if (requiresClient) {
+        const clientAuthStore = useClientAuthStore();
 
-    if (!authStore.isAuthenticated) {
-        return next({ path: '/auth/login', query: { redirect: to.fullPath } });
-    }
-
-    if (!authStore.user) {
-        try {
-            await authStore.fetchMe();
-        } catch (error) {
-            return next({ path: '/auth/login', query: { redirect: to.fullPath } });
+        if (!clientAuthStore.isAuthenticated) {
+            return next({ name: 'client-login', query: { redirect: to.fullPath } });
         }
-    }
 
-    if (!authStore.isAdmin) {
-        return next({ path: '/auth/login' });
+        if (!clientAuthStore.customer) {
+            try {
+                await clientAuthStore.fetchMe();
+            } catch (error) {
+                return next({ name: 'client-login', query: { redirect: to.fullPath } });
+            }
+        }
+
+        return next();
     }
 
     return next();
