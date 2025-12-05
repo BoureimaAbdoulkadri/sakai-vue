@@ -1,4 +1,5 @@
 import AppLayout from '@/layout/AppLayout.vue';
+import StorefrontLayout from '@/layout/StorefrontLayout.vue';
 import Landing from '@/views/pages/Landing.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
@@ -9,8 +10,24 @@ const router = createRouter({
         // Front public
         {
             path: '/',
-            name: 'landing',
-            component: Landing
+            component: StorefrontLayout,
+            children: [
+                {
+                    path: '',
+                    name: 'landing',
+                    component: Landing
+                },
+                {
+                    path: 'shop',
+                    name: 'client-catalog',
+                    component: () => import('@/views/client/Catalog.vue')
+                },
+                {
+                    path: 'products/:slug',
+                    name: 'client-product',
+                    component: () => import('@/views/client/Product.vue')
+                }
+            ]
         },
         // Back-office admin
         {
