@@ -1,112 +1,116 @@
+<template>
+    <div class="grid">
+        <div class="col-12">
+            <div class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4 gap-3">
+                <div>
+                    <h1 class="text-2xl font-semibold mb-1">Mes commandes</h1>
+                    <span class="text-sm text-muted-color">
+                        Consultez l'historique de vos commandes.
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <Card class="surface-card shadow-1 border-round">
+                <template #content>
+                    <div v-if="loading">
+                        <Skeleton height="2.5rem" class="mb-2" v-for="n in 4" :key="n" />
+                    </div>
+                    <div v-else>
+                        <DataTable
+                            v-if="orders.length"
+                            :value="orders"
+                            dataKey="id"
+                            responsive-layout="scroll"
+                            :paginator="true"
+                            :rows="pagination.perPage"
+                            :totalRecords="pagination.total"
+                            :first="(pagination.page - 1) * pagination.perPage"
+                            @page="onPage"
+                            class="mt-2"
+                        >
+                            <Column field="number" header="Commande" />
+                            <Column field="created_at" header="Date">
+                                <template #body="{ data }">
+                                    {{ formatDate(data.created_at) }}
+                                </template>
+                            </Column>
+                            <Column field="total" header="Total">
+                                <template #body="{ data }">
+                                    {{ formatMoney(data.total) }}
+                                </template>
+                            </Column>
+                            <Column field="status" header="Statut">
+                                <template #body="{ data }">
+                                    <Tag :value="data.status" :severity="statusSeverity(data.status)" />
+                                </template>
+                            </Column>
+                            <Column header="Actions" body-class="text-right">
+                                <template #body="{ data }">
+                                    <Button icon="pi pi-search" label="Détails" size="small" text @click="goToOrder(data.id)" />
+                                </template>
+                            </Column>
+                        </DataTable>
+
+                        <div v-else class="text-center text-sm text-muted-color py-4">
+                            Vous n'avez pas encore de commande.
+                        </div>
+                    </div>
+                </template>
+            </Card>
+        </div>
+    </div>
+</template>
+
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import Button from 'primevue/button';
+import { useClientOrders } from '@/composables/client/useClientOrders';
+
 import Card from 'primevue/card';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Tag from 'primevue/tag';
-import { useToast } from 'primevue/usetoast';
-import { fetchClientOrders } from '@/services/client/ordersService';
+import Button from 'primevue/button';
+import Skeleton from 'primevue/skeleton';
 
-const orders = ref([]);
-const loading = ref(false);
-const pagination = reactive({
-    page: 1,
-    perPage: 10,
-    total: 0
-});
-
-const toast = useToast();
 const router = useRouter();
 
-onMounted(() => {
-    loadOrders();
-});
+const { orders, loading, pagination, onPage } = useClientOrders();
 
-async function loadOrders(page = 1) {
-    loading.value = true;
-    try {
-        const response = await fetchClientOrders({ page });
-        orders.value = response.data ?? [];
-        pagination.page = page;
-        pagination.total = response.meta?.total ?? 0;
-        pagination.perPage = response.meta?.per_page ?? 10;
-    } catch (error) {
-        console.error(error);
-        toast.add({
-            severity: 'error',
-            summary: 'Erreur',
-            detail: 'Impossible de charger vos commandes.',
-            life: 4000
-        });
-    } finally {
-        loading.value = false;
+function formatDate(value) {
+    if (!value) return '—';
+    return new Intl.DateTimeFormat('fr-FR', {
+        dateStyle: 'short',
+        timeStyle: 'short'
+    }).format(new Date(value));
+}
+
+function formatMoney(value) {
+    if (value == null) return '—';
+    return new Intl.NumberFormat('fr-FR', {
+        style: 'currency',
+        currency: 'EUR'
+    }).format(Number(value));
+}
+
+function statusSeverity(status) {
+    switch (status) {
+        case 'pending':
+            return 'warning';
+        case 'paid':
+            return 'success';
+        case 'shipped':
+            return 'info';
+        case 'cancelled':
+        case 'refunded':
+            return 'danger';
+        default:
+            return 'info';
     }
 }
 
-function onPageChange(event) {
-    loadOrders((event.page ?? 0) + 1);
+function goToOrder(id) {
+    router.push({ name: 'client-order-detail', params: { id } });
 }
-
-function goToOrder(order) {
-    router.push({ name: 'client-order-detail', params: { id: order.id } });
-}
-
 </script>
-
-<template>
-    <div class="py-8 px-4 max-w-6xl mx-auto">
-        <div class="flex flex-column md:flex-row md:items-center md:justify-between gap-4 mb-6">
-            <div>
-                <p class="text-sm uppercase tracking-widest text-primary font-semibold">Mon compte</p>
-                <h1 class="text-3xl font-bold">Mes commandes</h1>
-            </div>
-        </div>
-
-        <Card class="shadow-sm border border-surface-200">
-            <DataTable
-                :value="orders"
-                :loading="loading"
-                paginator
-                :rows="pagination.perPage"
-                :totalRecords="pagination.total"
-                :first="(pagination.page - 1) * pagination.perPage"
-                @page="onPageChange"
-                responsiveLayout="scroll"
-                emptyMessage="Aucune commande pour le moment."
-            >
-                <Column field="number" header="Commande">
-                    <template #body="{ data }">
-                        <div class="flex flex-column">
-                            <span class="font-semibold">{{ data.number }}</span>
-                            <span class="text-sm text-muted-color">
-                                {{ new Date(data.created_at).toLocaleDateString('fr-FR') }}
-                            </span>
-                        </div>
-                    </template>
-                </Column>
-                <Column field="status" header="Statut">
-                    <template #body="{ data }">
-                        <Tag :value="data.status" :severity="data.status === 'completed' ? 'success' : 'info'" />
-                    </template>
-                </Column>
-                <Column field="payment_status" header="Paiement">
-                    <template #body="{ data }">
-                        <Tag :value="data.payment_status" :severity="data.payment_status === 'paid' ? 'success' : 'warning'" />
-                    </template>
-                </Column>
-                <Column header="Total">
-                    <template #body="{ data }">
-                        {{ new Intl.NumberFormat('fr-FR', { style: 'currency', currency: data.currency || 'EUR' }).format(data.total) }}
-                    </template>
-                </Column>
-                <Column header="Actions">
-                    <template #body="{ data }">
-                        <Button label="Voir" icon="pi pi-eye" text @click="goToOrder(data)" />
-                    </template>
-                </Column>
-            </DataTable>
-        </Card>
-    </div>
-</template>

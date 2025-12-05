@@ -1,87 +1,185 @@
+<template>
+    <div class="flex justify-content-center">
+        <div class="w-full md:w-6 lg:w-4">
+            <Card class="surface-card shadow-1 border-round">
+                <template #title>
+                    <span>Créer un compte client</span>
+                </template>
+                <template #subtitle>
+                    <span class="text-sm text-muted-color">
+                        Créez votre compte pour suivre vos commandes.
+                    </span>
+                </template>
+                <template #content>
+                    <div class="flex flex-column gap-3">
+                        <Message v-if="formError" severity="error" :closable="false">
+                            {{ formError }}
+                        </Message>
+
+                        <div class="field">
+                            <label for="name" class="block font-semibold mb-2">Nom complet</label>
+                            <InputText id="name" v-model="form.name" class="w-full" autocomplete="name" />
+                            <small v-if="fieldErrors.name" class="p-error">
+                                {{ fieldErrors.name }}
+                            </small>
+                        </div>
+
+                        <div class="field">
+                            <label for="email" class="block font-semibold mb-2">Email</label>
+                            <InputText
+                                id="email"
+                                v-model="form.email"
+                                type="email"
+                                class="w-full"
+                                autocomplete="email"
+                            />
+                            <small v-if="fieldErrors.email" class="p-error">
+                                {{ fieldErrors.email }}
+                            </small>
+                        </div>
+
+                        <div class="field">
+                            <label for="password" class="block font-semibold mb-2">Mot de passe</label>
+                            <Password
+                                id="password"
+                                v-model="form.password"
+                                :feedback="true"
+                                toggleMask
+                                class="w-full"
+                                inputClass="w-full"
+                            />
+                            <small v-if="fieldErrors.password" class="p-error">
+                                {{ fieldErrors.password }}
+                            </small>
+                        </div>
+
+                        <div class="field">
+                            <label for="password_confirmation" class="block font-semibold mb-2">
+                                Confirmation du mot de passe
+                            </label>
+                            <Password
+                                id="password_confirmation"
+                                v-model="form.password_confirmation"
+                                :feedback="false"
+                                toggleMask
+                                class="w-full"
+                                inputClass="w-full"
+                            />
+                        </div>
+
+                        <div class="flex align-items-center justify-content-between">
+                            <RouterLink :to="{ name: 'client-login' }" class="text-sm text-primary cursor-pointer">
+                                Déjà un compte ? Se connecter
+                            </RouterLink>
+                        </div>
+
+                        <Button
+                            label="Créer mon compte"
+                            icon="pi pi-user-plus"
+                            class="w-full mt-2"
+                            :loading="clientAuth.loading"
+                            @click="submit"
+                        />
+                    </div>
+                </template>
+            </Card>
+        </div>
+    </div>
+</template>
+
 <script setup>
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import { useRouter, RouterLink } from 'vue-router';
-import Button from 'primevue/button';
-import Card from 'primevue/card';
-import InputText from 'primevue/inputtext';
-import Password from 'primevue/password';
 import { useToast } from 'primevue/usetoast';
 import { useClientAuthStore } from '@/stores/clientAuth';
 
-const authStore = useClientAuthStore();
+import Card from 'primevue/card';
+import InputText from 'primevue/inputtext';
+import Password from 'primevue/password';
+import Button from 'primevue/button';
+import Message from 'primevue/message';
+
 const router = useRouter();
 const toast = useToast();
+const clientAuth = useClientAuthStore();
 
 const form = reactive({
     name: '',
     email: '',
-    phone: '',
     password: '',
     password_confirmation: ''
 });
 
+const formError = ref('');
+const fieldErrors = reactive({
+    name: '',
+    email: '',
+    password: ''
+});
+
+function resetFieldErrors() {
+    fieldErrors.name = '';
+    fieldErrors.email = '';
+    fieldErrors.password = '';
+}
+
 async function submit() {
+    formError.value = '';
+    resetFieldErrors();
+
+    if (!form.name || !form.email || !form.password || !form.password_confirmation) {
+        formError.value = 'Veuillez remplir tous les champs obligatoires.';
+        return;
+    }
+
+    if (form.password !== form.password_confirmation) {
+        formError.value = 'Les mots de passe ne correspondent pas.';
+        return;
+    }
+
     try {
-        await authStore.register(form);
+        await clientAuth.register({
+            name: form.name,
+            email: form.email,
+            password: form.password,
+            password_confirmation: form.password_confirmation
+        });
+
         toast.add({
             severity: 'success',
             summary: 'Compte créé',
-            detail: 'Bienvenue !',
-            life: 3000
+            detail: 'Votre compte a été créé avec succès.',
+            life: 4000
         });
+
         router.push({ name: 'client-orders' });
     } catch (error) {
         console.error(error);
+
+        const data = error.response?.data;
+
+        if (data?.errors) {
+            if (data.errors.name?.[0]) fieldErrors.name = data.errors.name[0];
+            if (data.errors.email?.[0]) fieldErrors.email = data.errors.email[0];
+            if (data.errors.password?.[0]) fieldErrors.password = data.errors.password[0];
+
+            formError.value = data.message || 'Veuillez corriger les erreurs du formulaire.';
+        } else {
+            formError.value = data?.message || 'Impossible de créer votre compte.';
+        }
+
         toast.add({
             severity: 'error',
             summary: 'Erreur',
-            detail: 'Impossible de créer le compte.',
+            detail: formError.value,
             life: 4000
         });
     }
 }
 </script>
 
-<template>
-    <div class="py-8 px-4 max-w-md mx-auto">
-        <Card class="shadow-sm border border-surface-200">
-            <template #title>Créer un compte</template>
-            <template #content>
-                <form class="space-y-4" @submit.prevent="submit">
-                    <span class="p-float-label">
-                        <InputText id="name" v-model="form.name" required class="w-full" />
-                        <label for="name">Nom complet</label>
-                    </span>
-                    <span class="p-float-label">
-                        <InputText id="email" v-model="form.email" type="email" required class="w-full" />
-                        <label for="email">Email</label>
-                    </span>
-                    <span class="p-float-label">
-                        <InputText id="phone" v-model="form.phone" class="w-full" />
-                        <label for="phone">Téléphone (optionnel)</label>
-                    </span>
-                    <span class="p-float-label">
-                        <Password id="password" v-model="form.password" :feedback="false" toggle-mask input-class="w-full" required />
-                        <label for="password">Mot de passe</label>
-                    </span>
-                    <span class="p-float-label">
-                        <Password
-                            id="passwordConfirmation"
-                            v-model="form.password_confirmation"
-                            :feedback="false"
-                            toggle-mask
-                            input-class="w-full"
-                            required
-                        />
-                        <label for="passwordConfirmation">Confirmation</label>
-                    </span>
-                    <Button type="submit" label="Créer mon compte" class="w-full" :loading="authStore.loading" />
-                </form>
-                <p class="mt-4 text-sm text-center text-muted-color">
-                    Déjà inscrit ?
-                    <RouterLink :to="{ name: 'client-login' }" class="text-primary hover:underline">Se connecter</RouterLink>
-                </p>
-            </template>
-        </Card>
-    </div>
-</template>
+<style scoped>
+.field {
+    margin-bottom: 0.75rem;
+}
+</style>

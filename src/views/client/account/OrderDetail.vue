@@ -1,106 +1,133 @@
-<script setup>
-import { onMounted, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import Button from 'primevue/button';
-import Card from 'primevue/card';
-import Divider from 'primevue/divider';
-import Tag from 'primevue/tag';
-import { useToast } from 'primevue/usetoast';
-import { fetchClientOrder } from '@/services/client/ordersService';
-
-const route = useRoute();
-const router = useRouter();
-const toast = useToast();
-
-const order = ref(null);
-const loading = ref(false);
-
-onMounted(loadOrder);
-watch(
-    () => route.params.id,
-    () => loadOrder()
-);
-
-async function loadOrder() {
-    const id = route.params.id;
-    if (!id) return;
-
-    loading.value = true;
-    try {
-        const response = await fetchClientOrder(id);
-        order.value = response.data;
-    } catch (error) {
-        console.error(error);
-        toast.add({
-            severity: 'error',
-            summary: 'Erreur',
-            detail: 'Impossible de charger cette commande.',
-            life: 4000
-        });
-        router.push({ name: 'client-orders' });
-    } finally {
-        loading.value = false;
-    }
-}
-
-function formatPrice(value, currency = 'EUR') {
-    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency }).format(Number(value || 0));
-}
-</script>
-
 <template>
-    <div class="py-8 px-4 max-w-5xl mx-auto">
-        <div class="flex flex-column md:flex-row md:justify-between md:items-center gap-4 mb-6">
-            <div>
-                <p class="text-sm uppercase tracking-widest text-primary font-semibold">Commande</p>
-                <h1 class="text-3xl font-bold">{{ order?.number ?? 'Commande' }}</h1>
-            </div>
-            <Button label="Retour aux commandes" icon="pi pi-arrow-left" outlined @click="router.push({ name: 'client-orders' })" />
+    <div class="grid">
+        <div class="col-12 mb-3">
+            <RouterLink :to="{ name: 'client-orders' }" class="inline-flex align-items-center text-sm text-primary cursor-pointer">
+                <i class="pi pi-arrow-left mr-2" />
+                Retour à mes commandes
+            </RouterLink>
         </div>
 
-        <Card class="shadow-sm border border-surface-200">
-            <template v-if="loading">
-                <div class="text-center py-10 text-muted-color">Chargement...</div>
-            </template>
-            <template v-else-if="order">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                        <p class="text-sm text-muted-color mb-1">Statut</p>
-                        <Tag :value="order.status" :severity="order.status === 'completed' ? 'success' : 'info'" />
+        <div class="col-12">
+            <Card class="surface-card shadow-1 border-round mb-4">
+                <template #content>
+                    <div v-if="loading">
+                        <Skeleton width="40%" height="1.5rem" class="mb-2" />
+                        <Skeleton width="30%" height="1rem" class="mb-2" />
+                        <Skeleton width="30%" height="1rem" class="mb-2" />
                     </div>
-                    <div>
-                        <p class="text-sm text-muted-color mb-1">Paiement</p>
-                        <Tag
-                            :value="order.payment_status"
-                            :severity="order.payment_status === 'paid' ? 'success' : 'warning'"
-                        />
-                    </div>
-                    <div>
-                        <p class="text-sm text-muted-color mb-1">Total</p>
-                        <p class="text-xl font-semibold">{{ formatPrice(order.total, order.currency || 'EUR') }}</p>
-                    </div>
-                </div>
-
-                <Divider class="my-6" />
-
-                <div class="space-y-3">
-                    <p class="text-lg font-semibold">Articles</p>
-                    <div
-                        v-for="item in order.items"
-                        :key="item.product_id + '-' + item.quantity"
-                        class="flex justify-between items-center py-3 border-b border-surface-100"
-                    >
-                        <div>
-                            <p class="font-semibold">{{ item.product_name }}</p>
-                            <p class="text-sm text-muted-color">Qté {{ item.quantity }}</p>
+                    <div v-else-if="order">
+                        <div class="flex flex-column md:flex-row md:justify-content-between gap-3">
+                            <div>
+                                <h2 class="text-xl font-semibold mb-1">
+                                    Commande {{ order.number }}
+                                </h2>
+                                <div class="text-sm text-muted-color mb-2">
+                                    Passée le {{ formatDate(order.created_at) }}
+                                </div>
+                                <Tag :value="order.status" :severity="statusSeverity(order.status)" />
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm text-muted-color">Total</div>
+                                <div class="text-2xl font-semibold">
+                                    {{ formatMoney(order.total) }}
+                                </div>
+                            </div>
                         </div>
-                        <p>{{ formatPrice(item.total, order.currency || 'EUR') }}</p>
                     </div>
-                </div>
-            </template>
-            <template v-else>
-                <div class="text-center py-10 text-muted-color">Commande introuvable.</div>
-            </template>
-        </Card>
+                    <div v-else class="text-sm text-muted-color">
+                        Commande introuvable.
+                    </div>
+                </template>
+            </Card>
+        </div>
+
+        <div class="col-12" v-if="order">
+            <Card class="surface-card shadow-1 border-round">
+                <template #title>Articles de la commande</template>
+                <template #content>
+                    <div v-if="loading">
+                        <Skeleton height="2.5rem" class="mb-2" v-for="n in 3" :key="n" />
+                    </div>
+                    <div v-else>
+                        <DataTable :value="order.items || []" dataKey="product_id" responsive-layout="scroll">
+                            <Column field="product_name" header="Produit" />
+                            <Column field="quantity" header="Quantité" />
+                            <Column field="unit_price" header="Prix unitaire">
+                                <template #body="{ data }">
+                                    {{ formatMoney(data.unit_price) }}
+                                </template>
+                            </Column>
+                            <Column field="total" header="Total">
+                                <template #body="{ data }">
+                                    {{ formatMoney(data.total) }}
+                                </template>
+                            </Column>
+                        </DataTable>
+                    </div>
+                </template>
+            </Card>
+        </div>
     </div>
 </template>
+
+<script setup>
+import { onMounted, watch } from 'vue';
+import { useRoute, RouterLink } from 'vue-router';
+import { useClientOrderDetail } from '@/composables/client/useClientOrderDetail';
+
+import Card from 'primevue/card';
+import Tag from 'primevue/tag';
+import Skeleton from 'primevue/skeleton';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+
+const route = useRoute();
+const { order, loading, loadOrder } = useClientOrderDetail();
+
+onMounted(() => {
+    if (route.params.id) {
+        loadOrder(route.params.id);
+    }
+});
+
+watch(
+    () => route.params.id,
+    (id) => {
+        if (id) {
+            loadOrder(id);
+        }
+    }
+);
+
+function formatDate(value) {
+    if (!value) return '—';
+    return new Intl.DateTimeFormat('fr-FR', {
+        dateStyle: 'short',
+        timeStyle: 'short'
+    }).format(new Date(value));
+}
+
+function formatMoney(value) {
+    if (value == null) return '—';
+    return new Intl.NumberFormat('fr-FR', {
+        style: 'currency',
+        currency: 'EUR'
+    }).format(Number(value));
+}
+
+function statusSeverity(status) {
+    switch (status) {
+        case 'pending':
+            return 'warning';
+        case 'paid':
+            return 'success';
+        case 'shipped':
+            return 'info';
+        case 'cancelled':
+        case 'refunded':
+            return 'danger';
+        default:
+            return 'info';
+    }
+}
+</script>
