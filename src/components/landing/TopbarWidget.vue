@@ -1,8 +1,12 @@
 <script setup>
-import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
+import { useRouter, RouterLink } from 'vue-router';
 import Button from 'primevue/button';
+import { useClientAuthStore } from '@/stores/clientAuth';
 
 const router = useRouter();
+const clientAuth = useClientAuthStore();
+const { customer } = storeToRefs(clientAuth);
 
 const navItems = [
     { label: 'Collections', target: 'categories' },
@@ -15,6 +19,11 @@ function smoothScroll(id) {
     if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+}
+
+async function handleLogout() {
+    await clientAuth.logout();
+    router.push({ name: 'landing' });
 }
 </script>
 
@@ -32,13 +41,31 @@ function smoothScroll(id) {
         </nav>
 
         <div class="landing-topbar__actions">
-            <Button
-                label="Se connecter"
-                text
-                size="small"
-                class="landing-topbar__ghost"
-                @click="router.push({ name: 'client-login' })"
-            />
+            <template v-if="!customer">
+                <Button
+                    label="Se connecter"
+                    text
+                    size="small"
+                    class="landing-topbar__ghost"
+                    @click="router.push({ name: 'client-login' })"
+                />
+            </template>
+            <template v-else>
+                <Button
+                    label="Mon compte"
+                    text
+                    size="small"
+                    class="landing-topbar__ghost"
+                    @click="router.push({ name: 'client-account' })"
+                />
+                <Button
+                    label="Se déconnecter"
+                    icon="pi pi-sign-out"
+                    size="small"
+                    outlined
+                    @click="handleLogout"
+                />
+            </template>
             <Button
                 label="Voir la boutique"
                 icon="pi pi-arrow-right"

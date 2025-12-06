@@ -60,7 +60,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { reactive, ref } from 'vue';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
@@ -77,7 +77,12 @@ const router = useRouter();
 const toast = useToast();
 const clientAuth = useClientAuthStore();
 
-const form = reactive({
+interface LoginForm {
+    email: string;
+    password: string;
+}
+
+const form = reactive<LoginForm>({
     email: '',
     password: ''
 });
@@ -98,7 +103,7 @@ async function submit() {
             password: form.password
         });
 
-        const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/account/orders';
+        const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : undefined;
 
         toast.add({
             severity: 'success',
@@ -107,7 +112,11 @@ async function submit() {
             life: 3000
         });
 
-        router.push(redirect);
+        if (redirect) {
+            router.push(redirect);
+        } else {
+            router.push({ name: 'client-catalog' });
+        }
     } catch (error) {
         console.error(error);
 

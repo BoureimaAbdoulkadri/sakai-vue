@@ -29,12 +29,12 @@ const router = createRouter({
                     component: () => import('@/views/client/Product.vue')
                 },
                 {
-                    path: 'account/login',
+                    path: 'login',
                     name: 'client-login',
                     component: () => import('@/views/client/auth/ClientLogin.vue')
                 },
                 {
-                    path: 'account/register',
+                    path: 'register',
                     name: 'client-register',
                     component: () => import('@/views/client/auth/ClientRegister.vue')
                 },
@@ -43,6 +43,12 @@ const router = createRouter({
                     name: 'client-orders',
                     meta: { requiresClientAuth: true },
                     component: () => import('@/views/client/account/Orders.vue')
+                },
+                {
+                    path: 'mon-compte',
+                    name: 'client-account',
+                    meta: { requiresClientAuth: true },
+                    component: () => import('@/views/client/account/ClientAccount.vue')
                 },
                 {
                     path: 'account/orders/:id',
@@ -139,9 +145,21 @@ const router = createRouter({
     ]
 });
 
+let clientHydratePromise = null;
+
 router.beforeEach(async (to, from, next) => {
     const requiresAdmin = to.matched.some((record) => record.meta?.requiresAdmin);
     const requiresClient = to.matched.some((record) => record.meta?.requiresClientAuth);
+    const clientAuthStore = useClientAuthStore();
+
+    if (!clientAuthStore.initialized) {
+        if (!clientHydratePromise) {
+            clientHydratePromise = clientAuthStore.fetchMe().catch(() => undefined);
+        }
+
+        await clientHydratePromise;
+        clientHydratePromise = null;
+    }
 
     if (requiresAdmin) {
         const authStore = useAuthStore();
@@ -166,9 +184,7 @@ router.beforeEach(async (to, from, next) => {
     }
 
     if (requiresClient) {
-        const clientAuthStore = useClientAuthStore();
-
-        if (!clientAuthStore.isAuthenticated) {
+        if (!clientAuthStore.token) {
             return next({ name: 'client-login', query: { redirect: to.fullPath } });
         }
 
@@ -178,6 +194,10 @@ router.beforeEach(async (to, from, next) => {
             } catch (error) {
                 return next({ name: 'client-login', query: { redirect: to.fullPath } });
             }
+        }
+
+        if (!clientAuthStore.customer) {
+            return next({ name: 'client-login', query: { redirect: to.fullPath } });
         }
 
         return next();

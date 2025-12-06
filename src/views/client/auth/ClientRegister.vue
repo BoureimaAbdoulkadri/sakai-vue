@@ -16,12 +16,21 @@
                             {{ formError }}
                         </Message>
 
-                        <div class="field">
-                            <label for="name" class="block font-semibold mb-2">Nom complet</label>
-                            <InputText id="name" v-model="form.name" fluid autocomplete="name" />
-                            <small v-if="fieldErrors.name" class="p-error">
-                                {{ fieldErrors.name }}
-                            </small>
+                        <div class="field-grid">
+                            <div class="field">
+                                <label for="first_name" class="block font-semibold mb-2">Prénom</label>
+                                <InputText id="first_name" v-model="form.first_name" fluid autocomplete="given-name" />
+                                <small v-if="fieldErrors.first_name" class="p-error">
+                                    {{ fieldErrors.first_name }}
+                                </small>
+                            </div>
+                            <div class="field">
+                                <label for="last_name" class="block font-semibold mb-2">Nom</label>
+                                <InputText id="last_name" v-model="form.last_name" fluid autocomplete="family-name" />
+                                <small v-if="fieldErrors.last_name" class="p-error">
+                                    {{ fieldErrors.last_name }}
+                                </small>
+                            </div>
                         </div>
 
                         <div class="field">
@@ -36,6 +45,23 @@
                             <small v-if="fieldErrors.email" class="p-error">
                                 {{ fieldErrors.email }}
                             </small>
+                        </div>
+
+                        <div class="field-grid">
+                            <div class="field">
+                                <label for="phone" class="block font-semibold mb-2">Téléphone</label>
+                                <InputText id="phone" v-model="form.phone" fluid autocomplete="tel" />
+                                <small v-if="fieldErrors.phone" class="p-error">
+                                    {{ fieldErrors.phone }}
+                                </small>
+                            </div>
+                            <div class="field">
+                                <label for="company" class="block font-semibold mb-2">Société (optionnel)</label>
+                                <InputText id="company" v-model="form.company_name" fluid />
+                                <small v-if="fieldErrors.company_name" class="p-error">
+                                    {{ fieldErrors.company_name }}
+                                </small>
+                            </div>
                         </div>
 
                         <div class="field">
@@ -86,7 +112,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { reactive, ref } from 'vue';
 import { useRouter, RouterLink } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
@@ -102,23 +128,42 @@ const router = useRouter();
 const toast = useToast();
 const clientAuth = useClientAuthStore();
 
-const form = reactive({
-    name: '',
+interface RegisterForm {
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone?: string;
+    company_name?: string;
+    password: string;
+    password_confirmation: string;
+}
+
+const form = reactive<RegisterForm>({
+    first_name: '',
+    last_name: '',
     email: '',
+    phone: '',
+    company_name: '',
     password: '',
     password_confirmation: ''
 });
 
 const formError = ref('');
 const fieldErrors = reactive({
-    name: '',
+    first_name: '',
+    last_name: '',
     email: '',
+    phone: '',
+    company_name: '',
     password: ''
 });
 
 function resetFieldErrors() {
-    fieldErrors.name = '';
+    fieldErrors.first_name = '';
+    fieldErrors.last_name = '';
     fieldErrors.email = '';
+    fieldErrors.phone = '';
+    fieldErrors.company_name = '';
     fieldErrors.password = '';
 }
 
@@ -126,7 +171,13 @@ async function submit() {
     formError.value = '';
     resetFieldErrors();
 
-    if (!form.name || !form.email || !form.password || !form.password_confirmation) {
+    if (
+        !form.first_name ||
+        !form.last_name ||
+        !form.email ||
+        !form.password ||
+        !form.password_confirmation
+    ) {
         formError.value = 'Veuillez remplir tous les champs obligatoires.';
         return;
     }
@@ -138,8 +189,11 @@ async function submit() {
 
     try {
         await clientAuth.register({
-            name: form.name,
+            first_name: form.first_name,
+            last_name: form.last_name,
             email: form.email,
+            phone: form.phone || undefined,
+            company_name: form.company_name || undefined,
             password: form.password,
             password_confirmation: form.password_confirmation
         });
@@ -151,15 +205,18 @@ async function submit() {
             life: 4000
         });
 
-        router.push({ name: 'client-orders' });
+        router.push({ name: 'client-catalog' });
     } catch (error) {
         console.error(error);
 
         const data = error.response?.data;
 
         if (data?.errors) {
-            if (data.errors.name?.[0]) fieldErrors.name = data.errors.name[0];
+            if (data.errors.first_name?.[0]) fieldErrors.first_name = data.errors.first_name[0];
+            if (data.errors.last_name?.[0]) fieldErrors.last_name = data.errors.last_name[0];
             if (data.errors.email?.[0]) fieldErrors.email = data.errors.email[0];
+            if (data.errors.phone?.[0]) fieldErrors.phone = data.errors.phone[0];
+            if (data.errors.company_name?.[0]) fieldErrors.company_name = data.errors.company_name[0];
             if (data.errors.password?.[0]) fieldErrors.password = data.errors.password[0];
 
             formError.value = data.message || 'Veuillez corriger les erreurs du formulaire.';
@@ -180,5 +237,11 @@ async function submit() {
 <style scoped>
 .field {
     margin-bottom: 0.75rem;
+}
+
+.field-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
 }
 </style>
