@@ -1,7 +1,7 @@
-<script setup>
-import { computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { useI18n } from 'vue-i18n';
+<script lang="ts" setup>
+import {computed} from 'vue';
+import {useRouter} from 'vue-router';
+import {useI18n} from 'vue-i18n';
 
 const router = useRouter();
 const { t } = useI18n();

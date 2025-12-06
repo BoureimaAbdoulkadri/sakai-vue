@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
-import { storeToRefs } from 'pinia';
+import {computed, onMounted, ref} from 'vue';
+import {storeToRefs} from 'pinia';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Tag from 'primevue/tag';
@@ -8,10 +8,10 @@ import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import Skeleton from 'primevue/skeleton';
 import Card from 'primevue/card';
-import { useToast } from 'primevue/usetoast';
-import { useI18n } from 'vue-i18n';
-import { useClientOrdersStore } from '@/stores/clientOrders';
-import { useRouter } from 'vue-router';
+import {useToast} from 'primevue/usetoast';
+import {useI18n} from 'vue-i18n';
+import {useClientOrdersStore} from '@/stores/clientOrders';
+import {useRouter} from 'vue-router';
 
 const toast = useToast();
 const router = useRouter();
@@ -204,6 +204,7 @@ function statusLabel(status?: string | null) {
                 </div>
 
                 <div class="dialog-items">
+                    <p class="dialog-items-title">{{ t('client.account.orders.dialog.articles') }}</p>
                     <div v-for="item in selectedOrder.items" :key="item.id" class="dialog-item">
                         <div>
                             <p class="item-name">{{ item.product_name }}</p>
@@ -281,6 +282,11 @@ function statusLabel(status?: string | null) {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+}
+
+.dialog-items-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
 }
 
 .dialog-item {

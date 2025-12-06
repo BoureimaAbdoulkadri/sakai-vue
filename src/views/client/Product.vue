@@ -1,10 +1,10 @@
-<script setup>
-import { ref, computed, onMounted, watch } from 'vue';
-import { useRoute, useRouter, RouterLink } from 'vue-router';
-import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
-import { useClientProductDetail } from '@/composables/client/useClientProductDetail';
-import { useCartStore } from '@/stores/cart';
+<script lang="ts" setup>
+import {computed, onMounted, ref, watch} from 'vue';
+import {RouterLink, useRoute, useRouter} from 'vue-router';
+import {useI18n} from 'vue-i18n';
+import {useToast} from 'primevue/usetoast';
+import {useClientProductDetail} from '@/composables/client/useClientProductDetail';
+import {useCartStore} from '@/stores/cart';
 
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';

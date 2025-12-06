@@ -343,7 +343,9 @@
       },
       "profile": {
         "stats": {
+            "ordersTitle": "Commandes",
             "orders": "commandes passées",
+            "spentTitle": "Dépenses",
             "spent": "cumulé sur la boutique"
         },
         "empty": "Vos informations seront synchronisées automatiquement une fois récupérées.",

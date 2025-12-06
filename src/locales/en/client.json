@@ -343,7 +343,9 @@
       },
       "profile": {
         "stats": {
+            "ordersTitle": "Orders",
           "orders": "orders placed",
+            "spentTitle": "Spend",
           "spent": "spent on the shop"
         },
         "empty": "We will sync your information as soon as it is available.",

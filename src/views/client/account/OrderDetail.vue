@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue';
-import { useRoute, RouterLink } from 'vue-router';
-import { storeToRefs } from 'pinia';
-import { useI18n } from 'vue-i18n';
+import {computed, onMounted, watch} from 'vue';
+import {RouterLink, useRoute} from 'vue-router';
+import {storeToRefs} from 'pinia';
+import {useI18n} from 'vue-i18n';
 import Card from 'primevue/card';
 import Tag from 'primevue/tag';
 import Skeleton from 'primevue/skeleton';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import { useToast } from 'primevue/usetoast';
-import { useClientOrdersStore } from '@/stores/clientOrders';
+import {useToast} from 'primevue/usetoast';
+import {useClientOrdersStore} from '@/stores/clientOrders';
 
 const route = useRoute();
 const toast = useToast();
@@ -140,7 +140,7 @@ watch(
                 </template>
                 <template #content>
                     <DataTable v-if="order.items?.length" :value="order.items" dataKey="id" responsive-layout="scroll" :rows="10">
-                        <Column field="product_name" :header="t('client.account.orders.columns.reference')">
+                        <Column :header="t('client.account.orderDetail.product')" field="product_name">
                             <template #body="{ data }">
                                 <span class="font-semibold">{{ data.product_name }}</span>
                             </template>

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { computed, reactive, watch } from 'vue';
-import { storeToRefs } from 'pinia';
+import {computed, reactive, watch} from 'vue';
+import {storeToRefs} from 'pinia';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import Skeleton from 'primevue/skeleton';
-import { useToast } from 'primevue/usetoast';
-import { useI18n } from 'vue-i18n';
-import { useClientProfileStore } from '@/stores/clientProfile';
+import {useToast} from 'primevue/usetoast';
+import {useI18n} from 'vue-i18n';
+import {useClientProfileStore} from '@/stores/clientProfile';
 
 const toast = useToast();
 const { t, locale } = useI18n();
@@ -74,14 +74,14 @@ async function handleSubmit() {
     <section class="client-profile-panel">
         <div class="stats-grid" v-if="stats">
             <Card class="stat-card">
-                <template #title>{{ t('client.account.profile.stats.orders') }}</template>
+                <template #title>{{ t('client.account.profile.stats.ordersTitle') }}</template>
                 <template #content>
                     <p class="stat-value">{{ stats.orders_count }}</p>
                     <p class="stat-label">{{ t('client.account.profile.stats.orders') }}</p>
                 </template>
             </Card>
             <Card class="stat-card">
-                <template #title>{{ t('client.account.profile.stats.spent') }}</template>
+                <template #title>{{ t('client.account.profile.stats.spentTitle') }}</template>
                 <template #content>
                     <p class="stat-value">{{ formattedTotalSpent }}</p>
                     <p class="stat-label">{{ t('client.account.profile.stats.spent') }}</p>
