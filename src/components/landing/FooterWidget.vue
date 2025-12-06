@@ -1,7 +1,15 @@
 <script setup>
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 
 const router = useRouter();
+const { t } = useI18n();
+
+const collectionLinks = computed(() => t('client.footer.collections.items', { returnObjects: true }) as string[]);
+const serviceLinks = computed(() => t('client.footer.service.items', { returnObjects: true }) as string[]);
+const infoLinks = computed(() => t('client.footer.info.items', { returnObjects: true }) as string[]);
+const currentYear = new Date().getFullYear();
 </script>
 
 <template>
@@ -12,7 +20,7 @@ const router = useRouter();
                     <i class="pi pi-shopping-bag"></i>
                     <span>EDO</span>
                 </div>
-                <p>Mode Enfant, Femme & Homme. Découvrez nos collections pensées pour toute la famille.</p>
+                <p>{{ t('client.footer.tagline') }}</p>
                 <div class="footer-socials">
                     <a href="#" aria-label="Facebook">
                         <i class="pi pi-facebook"></i>
@@ -27,32 +35,29 @@ const router = useRouter();
             </div>
 
             <div class="footer-links">
-                <h5>Collections</h5>
-                <button type="button" @click="router.push({ name: 'client-catalog' })">Enfant</button>
-                <button type="button" @click="router.push({ name: 'client-catalog' })">Femme</button>
-                <button type="button" @click="router.push({ name: 'client-catalog' })">Homme</button>
-                <button type="button" @click="router.push({ name: 'client-catalog' })">Nouveautés</button>
+                <h5>{{ t('client.footer.collections.title') }}</h5>
+                <button v-for="link in collectionLinks" :key="link" type="button" @click="router.push({ name: 'client-catalog' })">
+                    {{ link }}
+                </button>
             </div>
 
             <div class="footer-links">
-                <h5>Service Client</h5>
-                <button type="button">Contact</button>
-                <button type="button">Livraison & Retours</button>
-                <button type="button">Guide des tailles</button>
-                <button type="button">FAQ</button>
+                <h5>{{ t('client.footer.service.title') }}</h5>
+                <button v-for="link in serviceLinks" :key="link" type="button">
+                    {{ link }}
+                </button>
             </div>
 
             <div class="footer-links">
-                <h5>Informations</h5>
-                <button type="button">À propos</button>
-                <button type="button">Mentions légales</button>
-                <button type="button">CGV</button>
-                <button type="button">Politique de confidentialité</button>
+                <h5>{{ t('client.footer.info.title') }}</h5>
+                <button v-for="link in infoLinks" :key="link" type="button">
+                    {{ link }}
+                </button>
             </div>
         </div>
 
         <div class="footer-bottom">
-            <p>© {{ new Date().getFullYear() }} EDO. Tous droits réservés.</p>
+            <p>{{ t('client.footer.rights', { year: currentYear }) }}</p>
             <div class="footer-payments">
                 <i class="pi pi-credit-card"></i>
                 <i class="pi pi-paypal"></i>

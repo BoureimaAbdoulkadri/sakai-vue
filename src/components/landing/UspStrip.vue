@@ -1,26 +1,31 @@
 <script setup lang="ts">
-const usps = [
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
+
+const usps = computed(() => [
     {
         icon: 'pi-truck',
-        title: 'Livraison rapide',
-        description: 'Livraison en 24-48h partout en France'
+        title: t('client.usp.items.delivery.title'),
+        description: t('client.usp.items.delivery.description')
     },
     {
         icon: 'pi-shield',
-        title: 'Paiement sécurisé',
-        description: 'Transactions 100% sécurisées'
+        title: t('client.usp.items.payment.title'),
+        description: t('client.usp.items.payment.description')
     },
     {
         icon: 'pi-sync',
-        title: 'Retours gratuits',
-        description: 'Retours sous 30 jours sans frais'
+        title: t('client.usp.items.returns.title'),
+        description: t('client.usp.items.returns.description')
     },
     {
         icon: 'pi-heart',
-        title: 'Qualité garantie',
-        description: 'Matières premium et confortables'
+        title: t('client.usp.items.quality.title'),
+        description: t('client.usp.items.quality.description')
     }
-];
+]);
 </script>
 
 <template>

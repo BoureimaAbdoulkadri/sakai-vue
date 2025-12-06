@@ -1,9 +1,11 @@
 import { ref, reactive, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
+import { useI18n } from 'vue-i18n';
 import { fetchClientProducts } from '@/services/client/productsService';
 
 export function useClientProducts() {
     const toast = useToast();
+    const { t } = useI18n();
 
     const products = ref([]);
     const loading = ref(false);
@@ -42,8 +44,8 @@ export function useClientProducts() {
             console.error(error);
             toast.add({
                 severity: 'error',
-                summary: 'Erreur',
-                detail: 'Impossible de charger les produits.',
+                summary: t('client.common.error'),
+                detail: t('client.catalog.toast.loadError'),
                 life: 3000
             });
         } finally {

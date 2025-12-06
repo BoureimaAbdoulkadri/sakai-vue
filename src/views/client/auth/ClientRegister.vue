@@ -3,11 +3,11 @@
         <div class="w-full md:w-6 lg:w-4">
             <Card class="surface-card shadow-1 border-round">
                 <template #title>
-                    <h1 class="text-2xl font-semibold mb-1">Créer un compte client</h1>
+                    <h1 class="text-2xl font-semibold mb-1">{{ t('client.auth.register.title') }}</h1>
                 </template>
                 <template #subtitle>
                     <span class="text-sm text-muted-color">
-                        Créez votre compte pour suivre vos commandes et profiter de tous nos services.
+                        {{ t('client.auth.register.subtitle') }}
                     </span>
                 </template>
                 <template #content>
@@ -18,14 +18,14 @@
 
                         <div class="field-grid">
                             <div class="field">
-                                <label for="first_name" class="block font-semibold mb-2">Prénom</label>
+                                <label for="first_name" class="block font-semibold mb-2">{{ t('client.auth.register.firstName') }}</label>
                                 <InputText id="first_name" v-model="form.first_name" fluid autocomplete="given-name" />
                                 <small v-if="fieldErrors.first_name" class="p-error">
                                     {{ fieldErrors.first_name }}
                                 </small>
                             </div>
                             <div class="field">
-                                <label for="last_name" class="block font-semibold mb-2">Nom</label>
+                                <label for="last_name" class="block font-semibold mb-2">{{ t('client.auth.register.lastName') }}</label>
                                 <InputText id="last_name" v-model="form.last_name" fluid autocomplete="family-name" />
                                 <small v-if="fieldErrors.last_name" class="p-error">
                                     {{ fieldErrors.last_name }}
@@ -34,7 +34,7 @@
                         </div>
 
                         <div class="field">
-                            <label for="email" class="block font-semibold mb-2">Email</label>
+                            <label for="email" class="block font-semibold mb-2">{{ t('client.auth.register.email') }}</label>
                             <InputText
                                 id="email"
                                 v-model="form.email"
@@ -49,14 +49,14 @@
 
                         <div class="field-grid">
                             <div class="field">
-                                <label for="phone" class="block font-semibold mb-2">Téléphone</label>
+                                <label for="phone" class="block font-semibold mb-2">{{ t('client.auth.register.phone') }}</label>
                                 <InputText id="phone" v-model="form.phone" fluid autocomplete="tel" />
                                 <small v-if="fieldErrors.phone" class="p-error">
                                     {{ fieldErrors.phone }}
                                 </small>
                             </div>
                             <div class="field">
-                                <label for="company" class="block font-semibold mb-2">Société (optionnel)</label>
+                                <label for="company" class="block font-semibold mb-2">{{ t('client.auth.register.company') }}</label>
                                 <InputText id="company" v-model="form.company_name" fluid />
                                 <small v-if="fieldErrors.company_name" class="p-error">
                                     {{ fieldErrors.company_name }}
@@ -65,7 +65,7 @@
                         </div>
 
                         <div class="field">
-                            <label for="password" class="block font-semibold mb-2">Mot de passe</label>
+                            <label for="password" class="block font-semibold mb-2">{{ t('client.auth.register.password') }}</label>
                             <Password
                                 id="password"
                                 v-model="form.password"
@@ -80,7 +80,7 @@
 
                         <div class="field">
                             <label for="password_confirmation" class="block font-semibold mb-2">
-                                Confirmation du mot de passe
+                                {{ t('client.auth.register.passwordConfirmation') }}
                             </label>
                             <Password
                                 id="password_confirmation"
@@ -94,12 +94,12 @@
                         <div class="flex align-items-center justify-content-between">
                             <RouterLink :to="{ name: 'client-login' }" class="text-sm text-primary cursor-pointer hover:underline">
                                 <i class="pi pi-sign-in mr-1" />
-                                Déjà un compte ? Se connecter
+                                {{ t('client.auth.register.loginLink') }}
                             </RouterLink>
                         </div>
 
                         <Button
-                            label="Créer mon compte"
+                            :label="t('client.auth.register.submit')"
                             icon="pi pi-user-plus"
                             class="w-full mt-2"
                             :loading="clientAuth.loading"
@@ -116,6 +116,7 @@
 import { reactive, ref } from 'vue';
 import { useRouter, RouterLink } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
+import { useI18n } from 'vue-i18n';
 import { useClientAuthStore } from '@/stores/clientAuth';
 
 import Card from 'primevue/card';
@@ -127,6 +128,7 @@ import Message from 'primevue/message';
 const router = useRouter();
 const toast = useToast();
 const clientAuth = useClientAuthStore();
+const { t } = useI18n();
 
 interface RegisterForm {
     first_name: string;
@@ -178,12 +180,12 @@ async function submit() {
         !form.password ||
         !form.password_confirmation
     ) {
-        formError.value = 'Veuillez remplir tous les champs obligatoires.';
+        formError.value = t('client.auth.register.formError');
         return;
     }
 
     if (form.password !== form.password_confirmation) {
-        formError.value = 'Les mots de passe ne correspondent pas.';
+        formError.value = t('client.auth.register.passwordMismatch');
         return;
     }
 
@@ -200,8 +202,8 @@ async function submit() {
 
         toast.add({
             severity: 'success',
-            summary: 'Compte créé',
-            detail: 'Votre compte a été créé avec succès.',
+            summary: t('client.auth.toast.created'),
+            detail: t('client.auth.register.success'),
             life: 4000
         });
 
@@ -219,14 +221,14 @@ async function submit() {
             if (data.errors.company_name?.[0]) fieldErrors.company_name = data.errors.company_name[0];
             if (data.errors.password?.[0]) fieldErrors.password = data.errors.password[0];
 
-            formError.value = data.message || 'Veuillez corriger les erreurs du formulaire.';
+            formError.value = data.message || t('client.auth.register.fixErrors');
         } else {
-            formError.value = data?.message || 'Impossible de créer votre compte.';
+            formError.value = data?.message || t('client.auth.register.genericError');
         }
 
         toast.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: t('client.auth.toast.error'),
             detail: formError.value,
             life: 4000
         });

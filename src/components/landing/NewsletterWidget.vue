@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
@@ -8,12 +9,14 @@ const email = ref('');
 const loading = ref(false);
 const errorMessage = ref('');
 const toast = useToast();
+const { t } = useI18n();
+const benefits = computed(() => t('client.newsletter.benefits', { returnObjects: true }) as string[]);
 
 async function submit() {
     errorMessage.value = '';
 
     if (!email.value || !email.value.includes('@')) {
-        errorMessage.value = 'Merci de renseigner un email valide.';
+        errorMessage.value = t('client.newsletter.error');
         return;
     }
 
@@ -23,8 +26,8 @@ async function submit() {
         await new Promise((resolve) => setTimeout(resolve, 600));
         toast.add({
             severity: 'success',
-            summary: 'Inscription confirmée',
-            detail: 'Vous serez informé(e) des nouvelles collections.',
+            summary: t('client.newsletter.successTitle'),
+            detail: t('client.newsletter.successMessage'),
             life: 3000
         });
         email.value = '';
@@ -41,21 +44,26 @@ async function submit() {
             <div class="newsletter-icon">
                 <i class="pi pi-envelope"></i>
             </div>
-            <h2>Restez informé de nos nouveautés</h2>
+            <h2>{{ t('client.newsletter.title') }}</h2>
             <p>
-                Inscrivez-vous à notre newsletter et soyez les premiers à découvrir nos nouvelles collections,
-                offres exclusives et conseils mode pour toute la famille.
+                {{ t('client.newsletter.description') }}
             </p>
 
             <form class="newsletter-form" @submit.prevent="submit">
                 <div class="newsletter-input-group">
                     <div class="newsletter-field">
-                        <InputText v-model="email" type="email" placeholder="Entrez votre adresse email" fluid size="large" />
+                        <InputText
+                            v-model="email"
+                            type="email"
+                            :placeholder="t('client.newsletter.placeholder')"
+                            fluid
+                            size="large"
+                        />
                         <small v-if="errorMessage" class="p-error">{{ errorMessage }}</small>
                     </div>
                     <Button
                         type="submit"
-                        label="S'inscrire gratuitement"
+                        :label="t('client.newsletter.cta')"
                         icon="pi pi-send"
                         iconPos="right"
                         size="large"
@@ -66,17 +74,9 @@ async function submit() {
             </form>
 
             <ul class="newsletter-benefits">
-                <li>
+                <li v-for="benefit in benefits" :key="benefit">
                     <i class="pi pi-check-circle"></i>
-                    Offres exclusives
-                </li>
-                <li>
-                    <i class="pi pi-check-circle"></i>
-                    Nouveautés en avant-première
-                </li>
-                <li>
-                    <i class="pi pi-check-circle"></i>
-                    Désinscription facile
+                    {{ benefit }}
                 </li>
             </ul>
         </div>

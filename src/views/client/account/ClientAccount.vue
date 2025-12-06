@@ -1,60 +1,90 @@
 <script setup lang="ts">
+import { computed, ref, onMounted, watch } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useRouter } from 'vue-router';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
+import TabMenu from 'primevue/tabmenu';
+import type { MenuItem } from 'primevue/menuitem';
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { useClientAuthStore } from '@/stores/clientAuth';
+import { useClientProfileStore } from '@/stores/clientProfile';
+import ClientProfilePanel from '@/components/client/ClientProfilePanel.vue';
+import ClientOrdersPanel from '@/components/client/ClientOrdersPanel.vue';
 
 const router = useRouter();
 const clientAuth = useClientAuthStore();
+const profileStore = useClientProfileStore();
 const { customer } = storeToRefs(clientAuth);
+const { t } = useI18n();
+const activeTab = ref<'profile' | 'orders'>('profile');
+const activeIndex = ref(0);
+
+const tabItems = computed<MenuItem[]>(() => [
+    { label: t('client.account.tabs.profile'), icon: 'pi pi-user' },
+    { label: t('client.account.tabs.orders'), icon: 'pi pi-shopping-bag' }
+]);
 
 function goToOrders() {
-    router.push({ name: 'client-orders' });
+    activeIndex.value = 1;
 }
 
 async function logout() {
     await clientAuth.logout();
     router.push({ name: 'landing' });
 }
+
+onMounted(() => {
+    if (!profileStore.profile && !profileStore.loadingProfile) {
+        profileStore.fetchProfile().catch(() => undefined);
+    }
+});
+
+watch(
+    activeIndex,
+    (index) => {
+        activeTab.value = index === 1 ? 'orders' : 'profile';
+    },
+    { immediate: true }
+);
 </script>
 
 <template>
     <section class="client-account">
         <div class="client-account__header">
             <div>
-                <p class="client-account__eyebrow">Mon espace</p>
-                <h1>Mon compte</h1>
-                <p class="client-account__subtitle">Retrouvez vos informations personnelles et vos commandes.</p>
+                <p class="client-account__eyebrow">{{ t('client.account.header.eyebrow') }}</p>
+                <h1>{{ t('client.account.header.title') }}</h1>
+                <p class="client-account__subtitle">{{ t('client.account.header.subtitle') }}</p>
             </div>
             <div class="client-account__actions">
-                <Button label="Mes commandes" icon="pi pi-truck" outlined @click="goToOrders" />
-                <Button label="Déconnexion" severity="secondary" @click="logout" />
+                <Button :label="t('client.account.header.orders')" icon="pi pi-truck" outlined @click="goToOrders" />
+                <Button :label="t('client.account.header.logout')" severity="secondary" @click="logout" />
             </div>
         </div>
 
-        <div class="client-account__grid" v-if="customer">
-            <Card>
-                <template #title>Identité</template>
-                <template #content>
-                    <p class="text-lg font-semibold">{{ customer.name }}</p>
-                    <p class="text-sm text-muted-color">{{ customer.email }}</p>
-                </template>
-            </Card>
-            <Card>
-                <template #title>Préférences</template>
-                <template #content>
-                    <p class="text-sm text-muted-color mb-2">
-                        Les communications personnalisées seront envoyées sur votre adresse email.
-                    </p>
-                    <Button label="Mettre à jour bientôt" text disabled />
-                </template>
-            </Card>
-        </div>
-
-        <div v-else class="text-center text-muted-color">
-            <p>Chargement de vos informations...</p>
-        </div>
+        <Card class="client-account__card">
+            <template #title>
+                <div class="client-account__card-header">
+                    <div>
+                        <p class="text-sm text-muted-color mb-1">{{ t('client.account.header.connected') }}</p>
+                        <p class="text-lg font-semibold mb-0">{{ customer?.name }}</p>
+                        <p class="text-sm text-muted-color mb-0">{{ customer?.email }}</p>
+                    </div>
+                    <div class="client-account__tabmenu">
+                        <TabMenu :model="tabItems" v-model:activeIndex="activeIndex" />
+                    </div>
+                </div>
+            </template>
+            <template #content>
+                <div v-show="activeTab === 'profile'">
+                    <ClientProfilePanel />
+                </div>
+                <div v-show="activeTab === 'orders'">
+                    <ClientOrdersPanel />
+                </div>
+            </template>
+        </Card>
     </section>
 </template>
 
@@ -63,7 +93,7 @@ async function logout() {
     padding: clamp(2rem, 4vw, 4rem) clamp(1.5rem, 6vw, 4rem);
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem;
 }
 
 .client-account__header {
@@ -91,9 +121,18 @@ async function logout() {
     align-items: center;
 }
 
-.client-account__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.5rem;
+.client-account__card-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.client-account__tabmenu :deep(.p-tabmenu-nav) {
+    border: none;
+}
+
+.client-account__card {
+    border-radius: 1rem;
 }
 </style>

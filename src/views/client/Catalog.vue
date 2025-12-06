@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import Dropdown from 'primevue/dropdown';
@@ -27,6 +28,7 @@ interface NormalizedProduct {
 const router = useRouter();
 const toast = useToast();
 const cartStore = useCartStore();
+const { t, locale } = useI18n();
 
 const { products, loading } = useClientProducts();
 
@@ -39,38 +41,25 @@ const filterState = ref({
 
 const mobileFiltersOpen = ref(false);
 
-const curatedProducts: NormalizedProduct[] = [
-    {
-        id: 'curated-1',
-        slug: 'curated-1',
-        name: 'Chaise de bureau',
+const curatedProducts = computed<NormalizedProduct[]>(() => {
+    const fallback = t('client.catalog.selectionFallback', { returnObjects: true }) as Array<{
+        name: string;
+        category: string;
+        price: number;
+        image: string;
+    }>;
+
+    return fallback.map((item, index) => ({
+        id: `curated-${index}`,
+        slug: `curated-${index}`,
+        name: item.name,
         categoryKey: null,
-        genderLabel: 'Électronique',
-        price: 194,
+        genderLabel: item.category,
+        price: item.price,
         isNew: false,
-        imageUrl: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=900&q=60'
-    },
-    {
-        id: 'curated-2',
-        slug: 'curated-2',
-        name: 'Vélo de route',
-        categoryKey: null,
-        genderLabel: 'Électronique',
-        price: 81,
-        isNew: false,
-        imageUrl: 'https://images.unsplash.com/photo-1518655048521-f130df041f66?auto=format&fit=crop&w=900&q=60'
-    },
-    {
-        id: 'curated-3',
-        slug: 'curated-3',
-        name: 'Smartphone X',
-        categoryKey: null,
-        genderLabel: 'Maison',
-        price: 298,
-        isNew: false,
-        imageUrl: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=60'
-    }
-];
+        imageUrl: item.image
+    }));
+});
 
 const normalizedProducts = computed<NormalizedProduct[]>(() => {
     return (products.value ?? []).map((product: any) => {
@@ -139,19 +128,22 @@ const sortedProducts = computed(() => {
     return result;
 });
 
-const sortOptions = [
-    { label: 'Nouveautés', value: 'newest' },
-    { label: 'Prix croissant', value: 'price-asc' },
-    { label: 'Prix décroissant', value: 'price-desc' }
-];
+const sortOptions = computed(() => [
+    { label: t('client.catalog.sort.newest'), value: 'newest' },
+    { label: t('client.catalog.sort.priceAsc'), value: 'price-asc' },
+    { label: t('client.catalog.sort.priceDesc'), value: 'price-desc' }
+]);
 
-const priceFormatter = new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR'
-});
+const priceFormatter = computed(
+    () =>
+        new Intl.NumberFormat(locale.value === 'fr' ? 'fr-FR' : 'en-US', {
+            style: 'currency',
+            currency: 'EUR'
+        })
+);
 
 function formatPrice(value: number) {
-    return priceFormatter.format(value);
+    return priceFormatter.value.format(value);
 }
 
 function resetFilters() {
@@ -163,7 +155,7 @@ function resetFilters() {
 
 const featuredProducts = computed(() => {
     const picks = sortedProducts.value.slice(0, 3);
-    return picks.length ? picks : curatedProducts;
+    return picks.length ? picks : curatedProducts.value;
 });
 
 function goToProduct(product: NormalizedProduct) {
@@ -185,10 +177,14 @@ function addToCart(product: NormalizedProduct) {
     );
     toast.add({
         severity: 'success',
-        summary: 'Ajouté au panier',
-        detail: `${product.name} a été ajouté à votre panier`,
+        summary: t('client.catalog.toast.addTitle'),
+        detail: t('client.catalog.toast.addDetail', { name: product.name }),
         life: 2500
     });
+}
+
+function categoryLabel(key: CategoryKey): string {
+    return t(`client.catalog.categoryLabels.${key}`);
 }
 </script>
 
@@ -196,14 +192,14 @@ function addToCart(product: NormalizedProduct) {
     <section class="catalog-page">
         <div class="catalog-hero">
             <div>
-                <p class="catalog-eyebrow">Collection</p>
-                <h1>La boutique</h1>
-                <p class="catalog-subtitle">Affine ton style en filtrant nos pièces phares.</p>
+                <p class="catalog-eyebrow">{{ t('client.catalog.eyebrow') }}</p>
+                <h1>{{ t('client.catalog.title') }}</h1>
+                <p class="catalog-subtitle">{{ t('client.catalog.subtitle') }}</p>
             </div>
             <div class="catalog-controls">
                 <Button
                     class="lg:hidden"
-                    label="Filtres"
+                    :label="t('client.common.ctaFilters')"
                     icon="pi pi-sliders-h"
                     outlined
                     @click="mobileFiltersOpen = !mobileFiltersOpen"
@@ -213,7 +209,7 @@ function addToCart(product: NormalizedProduct) {
                     :options="sortOptions"
                     optionLabel="label"
                     optionValue="value"
-                    placeholder="Trier par"
+                    :placeholder="t('client.catalog.sortPlaceholder')"
                     class="catalog-sort"
                 />
             </div>
@@ -222,24 +218,24 @@ function addToCart(product: NormalizedProduct) {
         <div class="catalog-layout">
             <aside class="catalog-sidebar" :class="{ 'is-open': mobileFiltersOpen }">
                 <header class="sidebar-header lg:hidden">
-                    <span>Filtres</span>
+                    <span>{{ t('client.common.ctaFilters') }}</span>
                     <Button icon="pi pi-times" text @click="mobileFiltersOpen = false" />
                 </header>
 
                 <div class="sidebar-section">
                     <div class="sidebar-title">
-                        <span>Filtres</span>
-                        <Button label="Réinitialiser" text size="small" @click="resetFilters" />
+                        <span>{{ t('client.common.ctaFilters') }}</span>
+                        <Button :label="t('client.common.ctaReset')" text size="small" @click="resetFilters" />
                     </div>
                 </div>
 
                 <div class="sidebar-section">
-                    <p class="sidebar-label">Catégories</p>
+                    <p class="sidebar-label">{{ t('client.catalog.filters.categories') }}</p>
                     <div class="sidebar-checks">
                         <div class="sidebar-check" v-for="option in ['kids', 'women', 'men']" :key="option">
                             <Checkbox :inputId="`cat-${option}`" :value="option" v-model="filterState.categories" />
                             <label :for="`cat-${option}`">
-                                {{ option === 'kids' ? 'Enfant' : option === 'women' ? 'Femme' : 'Homme' }}
+                                {{ categoryLabel(option as CategoryKey) }}
                             </label>
                         </div>
                     </div>
@@ -247,29 +243,29 @@ function addToCart(product: NormalizedProduct) {
 
                 <div class="sidebar-section">
                     <p class="sidebar-label">
-                        Prix ({{ formatPrice(filterState.priceRange[0]) }} –
+                        {{ t('client.catalog.filters.price') }} ({{ formatPrice(filterState.priceRange[0]) }} –
                         {{ formatPrice(filterState.priceRange[1]) }})
                     </p>
                     <Slider v-model="filterState.priceRange" :min="priceBounds.min" :max="priceBounds.max" range class="w-full" />
                 </div>
 
                 <div class="sidebar-section">
-                    <p class="sidebar-label">Nouveautés</p>
+                    <p class="sidebar-label">{{ t('client.catalog.filters.onlyNew') }}</p>
                     <div class="sidebar-check">
                         <Checkbox inputId="only-new" v-model="filterState.onlyNew" :binary="true" />
-                        <label for="only-new">Afficher uniquement les nouveautés</label>
+                        <label for="only-new">{{ t('client.catalog.filters.onlyNew') }}</label>
                     </div>
                 </div>
             </aside>
 
             <section class="catalog-content">
                 <div class="catalog-meta">
-                    <span>{{ sortedProducts.length }} modèle(s)</span>
+                    <span>{{ t('client.catalog.results', { count: sortedProducts.length }) }}</span>
                     <div class="catalog-pills">
                         <span v-if="filterState.categories.length" class="pill">
-                            {{ filterState.categories.join(', ') }}
+                            {{ filterState.categories.map((key) => categoryLabel(key as CategoryKey)).join(', ') }}
                         </span>
-                        <span v-if="filterState.onlyNew" class="pill pill-accent">Nouveautés</span>
+                        <span v-if="filterState.onlyNew" class="pill pill-accent">{{ t('client.catalog.sort.newest') }}</span>
                     </div>
                 </div>
 
@@ -288,8 +284,9 @@ function addToCart(product: NormalizedProduct) {
 
                 <div v-else-if="!sortedProducts.length" class="catalog-empty">
                     <i class="pi pi-shopping-bag"></i>
-                    <p>Aucun produit ne correspond aux filtres actuels.</p>
-                    <Button label="Réinitialiser" text @click="resetFilters" />
+                    <p>{{ t('client.catalog.emptyTitle') }}</p>
+                    <span>{{ t('client.catalog.emptySubtitle') }}</span>
+                    <Button :label="t('client.common.ctaReset')" text @click="resetFilters" />
                 </div>
 
                 <div v-else class="product-grid">
@@ -301,7 +298,7 @@ function addToCart(product: NormalizedProduct) {
                             tabindex="0"
                             @click="goToProduct(product)"
                         >
-                            <span class="product-badge" v-if="product.isNew">Nouveau</span>
+                            <span class="product-badge" v-if="product.isNew">{{ t('client.catalog.badgeNew') }}</span>
                         </div>
                         <div class="product-body">
                             <div class="product-meta">
@@ -311,7 +308,7 @@ function addToCart(product: NormalizedProduct) {
                             <h3>{{ product.name }}</h3>
                             <div class="product-footer">
                                 <Button
-                                    label="Voir"
+                                    :label="t('client.catalog.view')"
                                     text
                                     icon="pi pi-arrow-right"
                                     iconPos="right"
@@ -330,10 +327,10 @@ function addToCart(product: NormalizedProduct) {
                 <div v-if="featuredProducts.length" class="catalog-reco">
                     <div class="catalog-reco__header">
                         <div>
-                            <p class="catalog-eyebrow">Sélection</p>
-                            <h2>Tags favoris</h2>
+                            <p class="catalog-eyebrow">{{ t('client.catalog.selectionEyebrow') }}</p>
+                            <h2>{{ t('client.catalog.selectionTitle') }}</h2>
                         </div>
-                        <Button label="Tout voir" text icon="pi pi-arrow-right" iconPos="right" />
+                        <Button :label="t('client.catalog.selectionCta')" text icon="pi pi-arrow-right" iconPos="right" />
                     </div>
                     <div class="catalog-reco__grid">
                         <article v-for="product in featuredProducts" :key="`reco-${product.id}`" class="reco-card">

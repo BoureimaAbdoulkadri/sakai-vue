@@ -3,11 +3,11 @@
         <div class="w-full md:w-6 lg:w-4">
             <Card class="surface-card shadow-1 border-round">
                 <template #title>
-                    <h1 class="text-2xl font-semibold mb-1">Connexion client</h1>
+                    <h1 class="text-2xl font-semibold mb-1">{{ t('client.auth.login.title') }}</h1>
                 </template>
                 <template #subtitle>
                     <span class="text-sm text-muted-color">
-                        Connectez-vous pour accéder à vos commandes et suivre vos achats.
+                        {{ t('client.auth.login.subtitle') }}
                     </span>
                 </template>
                 <template #content>
@@ -17,7 +17,7 @@
                         </Message>
 
                         <div class="field">
-                            <label for="email" class="block font-semibold mb-2">Email</label>
+                            <label for="email" class="block font-semibold mb-2">{{ t('client.auth.login.email') }}</label>
                             <InputText
                                 id="email"
                                 v-model="form.email"
@@ -28,7 +28,7 @@
                         </div>
 
                         <div class="field">
-                            <label for="password" class="block font-semibold mb-2">Mot de passe</label>
+                            <label for="password" class="block font-semibold mb-2">{{ t('client.auth.login.password') }}</label>
                             <Password
                                 id="password"
                                 v-model="form.password"
@@ -42,12 +42,12 @@
                         <div class="flex align-items-center justify-content-between">
                             <RouterLink :to="{ name: 'client-register' }" class="text-sm text-primary cursor-pointer hover:underline">
                                 <i class="pi pi-user-plus mr-1" />
-                                Créer un compte
+                                {{ t('client.auth.login.create') }}
                             </RouterLink>
                         </div>
 
                         <Button
-                            label="Se connecter"
+                            :label="t('client.auth.login.submit')"
                             icon="pi pi-sign-in"
                             class="w-full mt-2"
                             :loading="clientAuth.loading"
@@ -64,6 +64,7 @@
 import { reactive, ref } from 'vue';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
+import { useI18n } from 'vue-i18n';
 import { useClientAuthStore } from '@/stores/clientAuth';
 
 import Card from 'primevue/card';
@@ -76,6 +77,7 @@ const route = useRoute();
 const router = useRouter();
 const toast = useToast();
 const clientAuth = useClientAuthStore();
+const { t } = useI18n();
 
 interface LoginForm {
     email: string;
@@ -93,7 +95,7 @@ async function submit() {
     formError.value = '';
 
     if (!form.email || !form.password) {
-        formError.value = 'Veuillez renseigner votre email et votre mot de passe.';
+        formError.value = t('client.auth.login.formError');
         return;
     }
 
@@ -107,8 +109,8 @@ async function submit() {
 
         toast.add({
             severity: 'success',
-            summary: 'Connecté',
-            detail: 'Connexion réussie.',
+            summary: t('client.auth.toast.logged'),
+            detail: t('client.auth.login.success'),
             life: 3000
         });
 
@@ -120,15 +122,13 @@ async function submit() {
     } catch (error) {
         console.error(error);
 
-        const message =
-            error.response?.data?.message ||
-            'Impossible de se connecter. Vérifiez vos identifiants.';
+        const message = error.response?.data?.message || t('client.auth.login.error');
 
         formError.value = message;
 
         toast.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: t('client.auth.toast.error'),
             detail: message,
             life: 4000
         });

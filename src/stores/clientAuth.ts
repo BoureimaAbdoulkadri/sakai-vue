@@ -115,6 +115,7 @@ export const useClientAuthStore = defineStore('clientAuth', () => {
         loading,
         initialized,
         isAuthenticated,
+        setCustomer,
         login,
         register,
         fetchMe,

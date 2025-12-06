@@ -1,18 +1,22 @@
 <script setup>
+import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRouter, RouterLink } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import Button from 'primevue/button';
 import { useClientAuthStore } from '@/stores/clientAuth';
+import ClientLanguageSwitcher from '@/components/client/ClientLanguageSwitcher.vue';
 
 const router = useRouter();
 const clientAuth = useClientAuthStore();
 const { customer } = storeToRefs(clientAuth);
+const { t } = useI18n();
 
-const navItems = [
-    { label: 'Collections', target: 'categories' },
-    { label: 'Nouveautés', target: 'featured-products' },
-    { label: 'Newsletter', target: 'newsletter' }
-];
+const navItems = computed(() => [
+    { label: t('client.topbar.nav.collections'), target: 'categories' },
+    { label: t('client.topbar.nav.new'), target: 'featured-products' },
+    { label: t('client.topbar.nav.newsletter'), target: 'newsletter' }
+]);
 
 function smoothScroll(id) {
     const element = document.getElementById(id);
@@ -41,9 +45,10 @@ async function handleLogout() {
         </nav>
 
         <div class="landing-topbar__actions">
+            <ClientLanguageSwitcher />
             <template v-if="!customer">
                 <Button
-                    label="Se connecter"
+                    :label="t('client.topbar.actions.login')"
                     text
                     size="small"
                     class="landing-topbar__ghost"
@@ -52,14 +57,14 @@ async function handleLogout() {
             </template>
             <template v-else>
                 <Button
-                    label="Mon compte"
+                    :label="t('client.topbar.actions.account')"
                     text
                     size="small"
                     class="landing-topbar__ghost"
                     @click="router.push({ name: 'client-account' })"
                 />
                 <Button
-                    label="Se déconnecter"
+                    :label="t('client.topbar.actions.logout')"
                     icon="pi pi-sign-out"
                     size="small"
                     outlined
@@ -67,7 +72,7 @@ async function handleLogout() {
                 />
             </template>
             <Button
-                label="Voir la boutique"
+                :label="t('client.topbar.actions.shop')"
                 icon="pi pi-arrow-right"
                 iconPos="right"
                 size="small"
@@ -144,11 +149,11 @@ async function handleLogout() {
     transform: scaleX(1);
 }
 
-.landing-topbar__actions {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-}
+    .landing-topbar__actions {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+    }
 
 .landing-topbar__ghost {
     border-radius: 999px;

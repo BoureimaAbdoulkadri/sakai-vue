@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
 import { useClientProductDetail } from '@/composables/client/useClientProductDetail';
 import { useCartStore } from '@/stores/cart';
@@ -15,6 +16,7 @@ const route = useRoute();
 const router = useRouter();
 const toast = useToast();
 const cartStore = useCartStore();
+const { t, locale } = useI18n();
 
 const { product, loading, loadProduct } = useClientProductDetail();
 
@@ -22,22 +24,16 @@ const quantity = ref(1);
 const sizeOptions = ['XS', 'S', 'M', 'L', 'XL'];
 const selectedSize = ref(null);
 
-const highlights = ['Livraison premium 48h', 'Retours offerts 30 jours', 'Paiement sécurisé'];
+const highlights = computed(() => t('client.product.highlights', { returnObjects: true }) as string[]);
+const guaranteeColumns = computed(() => t('client.product.guarantees', { returnObjects: true }) as Array<{ title: string; text: string }>);
 
-const guaranteeColumns = [
-    {
-        title: 'Livraison & retours',
-        text: 'Expédition express sous 24h et retours offerts en France métropolitaine.'
-    },
-    {
-        title: 'Service client',
-        text: 'Conciergerie disponible 7j/7 pour répondre à toutes vos questions.'
-    },
-    {
-        title: 'Authenticité',
-        text: 'Chaque pièce est contrôlée et accompagnée d’un certificat de conformité.'
-    }
-];
+const priceFormatter = computed(
+    () =>
+        new Intl.NumberFormat(locale.value === 'fr' ? 'fr-FR' : 'en-US', {
+            style: 'currency',
+            currency: 'EUR'
+        })
+);
 
 const isOutOfStock = computed(() => {
     return product.value && product.value.stock !== null && product.value.stock <= 0;
@@ -47,10 +43,7 @@ const isNewProduct = computed(() => Boolean(product.value?.is_new ?? product.val
 
 function formatPrice(value) {
     if (value == null) return '—';
-    return new Intl.NumberFormat('fr-FR', {
-        style: 'currency',
-        currency: 'EUR'
-    }).format(Number(value));
+    return priceFormatter.value.format(Number(value));
 }
 
 function formatCategory() {
@@ -69,8 +62,8 @@ function addToCart() {
 
     toast.add({
         severity: 'success',
-        summary: 'Ajouté au panier',
-        detail: `${product.value.name} a été ajouté à votre panier.`,
+        summary: t('client.product.toast.addTitle'),
+        detail: t('client.product.toast.addDetail', { name: product.value.name }),
         life: 3000
     });
 }
@@ -94,7 +87,7 @@ watch(
 <template>
     <section class="product-page">
         <div class="product-header">
-            <RouterLink :to="{ name: 'client-catalog' }">Boutique</RouterLink>
+            <RouterLink :to="{ name: 'client-catalog' }">{{ t('client.product.breadcrumb') }}</RouterLink>
             <span>/</span>
             <span>{{ product?.name ?? '—' }}</span>
         </div>
@@ -113,11 +106,11 @@ watch(
 
         <div v-else-if="product" class="product-hero">
             <div class="product-media">
-                <span v-if="isNewProduct" class="product-pill">Nouveauté</span>
+                <span v-if="isNewProduct" class="product-pill">{{ t('client.product.newBadge') }}</span>
                 <img v-if="product.image_url" :src="product.image_url" :alt="product.name" />
                 <div v-else class="product-media__placeholder">
                     <i class="pi pi-image"></i>
-                    <span>Image indisponible</span>
+                    <span>{{ t('client.product.imageMissing') }}</span>
                 </div>
             </div>
 
@@ -127,9 +120,9 @@ watch(
                     <Tag
                         v-if="!isOutOfStock && product.stock !== null"
                         severity="success"
-                        :value="`${product.stock} en stock`"
+                        :value="t('client.product.stock', { count: product.stock })"
                     />
-                    <Tag v-else-if="isOutOfStock" severity="danger" value="Rupture" />
+                    <Tag v-else-if="isOutOfStock" severity="danger" :value="t('client.product.stockOut')" />
                 </div>
 
                 <h1>{{ product.name }}</h1>
@@ -140,11 +133,11 @@ watch(
 
                 <div class="product-controls">
                     <div class="product-control">
-                        <label>Taille</label>
+                        <label>{{ t('client.product.size') }}</label>
                         <SelectButton v-model="selectedSize" :options="sizeOptions" />
                     </div>
                     <div class="product-control">
-                        <label>Quantité</label>
+                        <label>{{ t('client.product.quantity') }}</label>
                         <InputNumber
                             v-model="quantity"
                             :min="1"
@@ -157,16 +150,16 @@ watch(
 
                 <div class="product-actions">
                     <Button
-                        label="Ajouter au panier"
+                        :label="t('client.product.add')"
                         icon="pi pi-shopping-cart"
                         size="large"
                         class="product-action-primary"
                         :disabled="isOutOfStock"
-                        v-tooltip.top="isOutOfStock ? 'Ce produit est en rupture de stock' : ''"
+                        v-tooltip.top="isOutOfStock ? t('client.product.tooltip') : ''"
                         @click="addToCart"
                     />
                     <Button
-                        label="Continuer vos achats"
+                        :label="t('client.product.continue')"
                         icon="pi pi-arrow-left"
                         size="large"
                         outlined
@@ -181,12 +174,12 @@ watch(
         </div>
 
         <div v-else class="product-empty">
-            Produit introuvable.
+            {{ t('client.product.empty') }}
         </div>
 
         <div v-if="product" class="product-extra">
             <div class="product-extra__block">
-                <h3>Détails & Composition</h3>
+                <h3>{{ t('client.product.details') }}</h3>
                 <p>{{ product.description || product.short_description }}</p>
             </div>
             <div class="product-extra__grid">

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
+import { useI18n } from 'vue-i18n';
 import Button from 'primevue/button';
 import Carousel from 'primevue/carousel';
 import Skeleton from 'primevue/skeleton';
@@ -20,8 +21,17 @@ interface ProductPreview {
 
 const router = useRouter();
 const toast = useToast();
+const { t, locale } = useI18n();
 const products = ref<ProductPreview[]>([]);
 const loading = ref(false);
+
+const priceFormatter = computed(
+    () =>
+        new Intl.NumberFormat(locale.value === 'fr' ? 'fr-FR' : 'en-US', {
+            style: 'currency',
+            currency: 'EUR'
+        })
+);
 
 onMounted(() => {
     loadProducts();
@@ -43,8 +53,8 @@ async function loadProducts() {
         products.value = [];
         toast.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: 'Impossible de charger les nouveautés.',
+            summary: t('client.featured.errorTitle'),
+            detail: t('client.featured.errorMessage'),
             life: 3000
         });
     } finally {
@@ -65,11 +75,12 @@ function formatPrice(value: ProductPreview['price']) {
         return '—';
     }
 
-    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(Number(value));
+    return priceFormatter.value.format(Number(value));
 }
 
 function productDescription(product: ProductPreview) {
-    const desc = product.short_description || product.description || 'Pièce incontournable pour compléter votre dressing.';
+    const desc =
+        product.short_description || product.description || t('client.featured.placeholder');
     return desc.length > 80 ? desc.substring(0, 80) + '...' : desc;
 }
 </script>
@@ -78,11 +89,18 @@ function productDescription(product: ProductPreview) {
     <section class="featured-products">
         <div class="featured-products__heading">
             <div>
-                <p>Nouveautés</p>
-                <h2>Nos derniers produits</h2>
-                <span>Découvrez les dernières pièces ajoutées à notre collection</span>
+                <p>{{ t('client.featured.eyebrow') }}</p>
+                <h2>{{ t('client.featured.title') }}</h2>
+                <span>{{ t('client.featured.subtitle') }}</span>
             </div>
-            <Button label="Voir tout" icon="pi pi-arrow-right" iconPos="right" outlined size="large" @click="goToShop" />
+            <Button
+                :label="t('client.featured.cta')"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                outlined
+                size="large"
+                @click="goToShop"
+            />
         </div>
 
         <div v-if="loading" class="products-skeleton">
@@ -115,7 +133,7 @@ function productDescription(product: ProductPreview) {
                                 <div v-else class="product-card__placeholder">
                                     <i class="pi pi-image"></i>
                                 </div>
-                                <Tag value="Nouveau" severity="success" class="product-card__badge" />
+                                <Tag :value="t('client.featured.badge')" severity="success" class="product-card__badge" />
                             </div>
                             <div class="product-card__body">
                                 <h3>{{ product.name }}</h3>
@@ -133,8 +151,8 @@ function productDescription(product: ProductPreview) {
 
         <div v-else class="featured-products__empty">
             <i class="pi pi-shopping-bag"></i>
-            <p>Aucun produit disponible</p>
-            <span>Revenez bientôt pour découvrir nos nouveautés !</span>
+            <p>{{ t('client.featured.emptyTitle') }}</p>
+            <span>{{ t('client.featured.emptySubtitle') }}</span>
         </div>
     </section>
 </template>

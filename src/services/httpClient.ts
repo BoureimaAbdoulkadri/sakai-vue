@@ -14,9 +14,16 @@ const httpClient = axios.create({
 
 httpClient.interceptors.request.use((config) => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('client_auth_token') : null;
+    const locale = typeof window !== 'undefined'
+        ? localStorage.getItem('client_locale') || localStorage.getItem('locale')
+        : null;
     if (token) {
         config.headers = config.headers ?? {};
         config.headers.Authorization = `Bearer ${token}`;
+    }
+    if (locale) {
+        config.headers = config.headers ?? {};
+        config.headers['X-Client-Locale'] = locale;
     }
     return config;
 });

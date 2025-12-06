@@ -1,11 +1,13 @@
 import { ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
+import { useI18n } from 'vue-i18n';
 import { postClientCheckout } from '@/services/client/checkoutService';
 import { useCartStore } from '@/stores/cart';
 
 export function useClientCheckout() {
     const toast = useToast();
     const cartStore = useCartStore();
+    const { t } = useI18n();
 
     const loading = ref(false);
     const order = ref(null);
@@ -36,8 +38,8 @@ export function useClientCheckout() {
         if (!cartStore.items.length) {
             toast.add({
                 severity: 'warn',
-                summary: 'Panier vide',
-                detail: 'Ajoutez des produits avant de passer la commande.',
+                summary: t('client.common.warn'),
+                detail: t('client.checkout.toast.empty'),
                 life: 3000
             });
             return;
@@ -62,16 +64,16 @@ export function useClientCheckout() {
 
             toast.add({
                 severity: 'success',
-                summary: 'Commande créée',
-                detail: 'Votre commande a bien été enregistrée.',
+                summary: t('client.common.success'),
+                detail: t('client.checkout.toast.created'),
                 life: 4000
             });
         } catch (error) {
             console.error(error);
             toast.add({
                 severity: 'error',
-                summary: 'Erreur',
-                detail: 'Impossible de finaliser la commande pour le moment.',
+                summary: t('client.common.error'),
+                detail: t('client.checkout.toast.error'),
                 life: 4000
             });
         } finally {

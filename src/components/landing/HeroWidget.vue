@@ -1,36 +1,34 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import Button from 'primevue/button';
 import Carousel from 'primevue/carousel';
 
 const router = useRouter();
+const { t } = useI18n();
 
-// Slides du carousel hero
-const heroSlides = ref([
+const heroSlides = computed(() => [
     {
-        title: 'Collection Printemps / Été 2025',
-        subtitle: 'Mode Enfant',
-        description: 'Des vêtements confortables et colorés pour vos enfants',
+        title: t('client.hero.slides.kids.title'),
+        subtitle: t('client.hero.slides.kids.subtitle'),
+        description: t('client.hero.slides.kids.description'),
         image: 'https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?w=1200&h=800&fit=crop',
-        cta: 'Découvrir Enfant',
-        color: 'primary'
+        cta: t('client.hero.slides.kids.cta')
     },
     {
-        title: 'Élégance & Confort',
-        subtitle: 'Mode Femme',
-        description: 'Collections tendances pour toutes les occasions',
+        title: t('client.hero.slides.women.title'),
+        subtitle: t('client.hero.slides.women.subtitle'),
+        description: t('client.hero.slides.women.description'),
         image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1200&h=800&fit=crop',
-        cta: 'Découvrir Femme',
-        color: 'pink'
+        cta: t('client.hero.slides.women.cta')
     },
     {
-        title: 'Style & Performance',
-        subtitle: 'Mode Homme',
-        description: 'Des pièces intemporelles et modernes',
+        title: t('client.hero.slides.men.title'),
+        subtitle: t('client.hero.slides.men.subtitle'),
+        description: t('client.hero.slides.men.description'),
         image: 'https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?w=1200&h=800&fit=crop',
-        cta: 'Découvrir Homme',
-        color: 'cyan'
+        cta: t('client.hero.slides.men.cta')
     }
 ]);
 
@@ -83,7 +81,7 @@ function goToShop() {
                                     @click="goToShop"
                                 />
                                 <Button
-                                    label="Voir tout"
+                                    :label="t('client.hero.viewAll')"
                                     icon="pi pi-arrow-right"
                                     iconPos="right"
                                     severity="secondary"

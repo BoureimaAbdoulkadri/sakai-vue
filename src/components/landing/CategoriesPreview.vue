@@ -1,38 +1,35 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import Button from 'primevue/button';
 
 const router = useRouter();
+const { t } = useI18n();
 
-const categories = [
+const categories = computed(() => [
     {
         key: 'kids',
-        label: 'Enfant',
-        description: 'Vêtements confortables et colorés pour vos enfants',
+        label: t('client.categories.cards.kids.title'),
+        description: t('client.categories.cards.kids.description'),
         icon: 'pi-star',
-        image: 'https://images.unsplash.com/photo-1519457431-44caa965772d?w=600&h=800&fit=crop',
-        color: 'bg-pink-100',
-        iconColor: 'text-pink-600'
+        image: 'https://images.unsplash.com/photo-1519457431-44caa965772d?w=600&h=800&fit=crop'
     },
     {
         key: 'women',
-        label: 'Femme',
-        description: 'Collections tendances pour toutes les occasions',
+        label: t('client.categories.cards.women.title'),
+        description: t('client.categories.cards.women.description'),
         icon: 'pi-heart',
-        image: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=600&h=800&fit=crop',
-        color: 'bg-purple-100',
-        iconColor: 'text-purple-600'
+        image: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=600&h=800&fit=crop'
     },
     {
         key: 'men',
-        label: 'Homme',
-        description: 'Des pièces intemporelles et modernes',
+        label: t('client.categories.cards.men.title'),
+        description: t('client.categories.cards.men.description'),
         icon: 'pi-user',
-        image: 'https://images.unsplash.com/photo-1488161628813-04466f872be2?w=600&h=800&fit=crop',
-        color: 'bg-cyan-100',
-        iconColor: 'text-cyan-600'
+        image: 'https://images.unsplash.com/photo-1488161628813-04466f872be2?w=600&h=800&fit=crop'
     }
-];
+]);
 
 function goToCategory() {
     router.push({ name: 'client-catalog' });
@@ -42,9 +39,9 @@ function goToCategory() {
 <template>
     <div class="categories-preview">
         <div class="section-heading">
-            <p>Nos Collections</p>
-            <h2>Enfant, Femme & Homme</h2>
-            <span>Découvrez nos univers mode pensés pour toute la famille</span>
+            <p>{{ t('client.categories.eyebrow') }}</p>
+            <h2>{{ t('client.categories.title') }}</h2>
+            <span>{{ t('client.categories.subtitle') }}</span>
         </div>
 
         <div class="categories-grid">
@@ -69,7 +66,7 @@ function goToCategory() {
                     <h3>{{ category.label }}</h3>
                     <p>{{ category.description }}</p>
                     <Button
-                        label="Découvrir"
+                        :label="t('client.categories.cta')"
                         icon="pi pi-arrow-right"
                         iconPos="right"
                         text

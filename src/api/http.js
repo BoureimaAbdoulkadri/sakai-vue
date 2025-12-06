@@ -16,6 +16,9 @@ http.interceptors.request.use((config) => {
     const url = config.url ?? '';
     const adminToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
     const clientToken = typeof window !== 'undefined' ? localStorage.getItem('client_auth_token') : null;
+    const locale = typeof window !== 'undefined'
+        ? localStorage.getItem('client_locale') || localStorage.getItem('locale')
+        : null;
 
     config.headers = config.headers || {};
 
@@ -31,6 +34,10 @@ http.interceptors.request.use((config) => {
         }
     } else if (adminToken) {
         config.headers.Authorization = `Bearer ${adminToken}`;
+    }
+
+    if (locale) {
+        config.headers['X-Client-Locale'] = locale;
     }
 
     return config;
