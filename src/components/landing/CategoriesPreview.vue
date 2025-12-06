@@ -51,7 +51,7 @@ function goToCategory() {
 
         <div class="grid">
             <div v-for="category in categories" :key="category.key" class="col-12 md:col-4">
-                <Card class="surface-card shadow-1 border-round h-full">
+                <Card class="surface-card shadow-1 border-round h-full flex flex-column">
                     <template #title>
                         <div class="flex align-items-center gap-2">
                             <i :class="[category.icon, 'text-primary text-xl']" />
@@ -59,8 +59,12 @@ function goToCategory() {
                         </div>
                     </template>
                     <template #content>
-                        <p class="text-sm text-muted-color mb-4">{{ category.description }}</p>
-                        <Button label="Voir les produits" text @click="goToCategory" />
+                        <div class="flex flex-column h-full">
+                            <p class="text-sm text-muted-color mb-4">{{ category.description }}</p>
+                            <div class="mt-auto">
+                                <Button label="Voir les produits" text @click="goToCategory" />
+                            </div>
+                        </div>
                     </template>
                 </Card>
             </div>

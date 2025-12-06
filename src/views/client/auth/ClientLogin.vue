@@ -1,15 +1,13 @@
 <template>
-    <div class="flex justify-content-center">
+    <div class="flex justify-content-center py-6">
         <div class="w-full md:w-6 lg:w-4">
             <Card class="surface-card shadow-1 border-round">
                 <template #title>
-                    <div class="flex justify-content-between align-items-center">
-                        <span>Connexion client</span>
-                    </div>
+                    <h1 class="text-2xl font-semibold mb-1">Connexion client</h1>
                 </template>
                 <template #subtitle>
                     <span class="text-sm text-muted-color">
-                        Connectez-vous pour accéder à vos commandes.
+                        Connectez-vous pour accéder à vos commandes et suivre vos achats.
                     </span>
                 </template>
                 <template #content>
@@ -24,7 +22,7 @@
                                 id="email"
                                 v-model="form.email"
                                 type="email"
-                                class="w-full"
+                                fluid
                                 autocomplete="email"
                             />
                         </div>
@@ -36,14 +34,14 @@
                                 v-model="form.password"
                                 :feedback="false"
                                 toggleMask
-                                class="w-full"
-                                inputClass="w-full"
+                                fluid
                                 autocomplete="current-password"
                             />
                         </div>
 
                         <div class="flex align-items-center justify-content-between">
-                            <RouterLink :to="{ name: 'client-register' }" class="text-sm text-primary cursor-pointer">
+                            <RouterLink :to="{ name: 'client-register' }" class="text-sm text-primary cursor-pointer hover:underline">
+                                <i class="pi pi-user-plus mr-1" />
                                 Créer un compte
                             </RouterLink>
                         </div>

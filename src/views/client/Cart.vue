@@ -89,6 +89,7 @@ function removeItem(productId) {
                                 icon="pi pi-trash"
                                 severity="danger"
                                 text
+                                v-tooltip.top="'Retirer du panier'"
                                 @click="removeItem(item.product_id)"
                             />
                         </div>
@@ -121,9 +122,61 @@ function removeItem(productId) {
         </div>
 
         <div v-else class="bg-white border border-dashed border-surface-300 rounded-2xl p-10 text-center">
-            <p class="text-xl font-semibold mb-2">Votre panier est vide</p>
-            <p class="text-muted-color mb-4">Ajoutez des produits pour commencer votre commande.</p>
-            <Button label="Voir le catalogue" icon="pi pi-arrow-right" @click="router.push({ name: 'client-catalog' })" />
+            <div class="flex flex-column align-items-center gap-4">
+                <i class="pi pi-shopping-cart text-6xl text-surface-300"></i>
+                <div>
+                    <p class="text-xl font-semibold mb-2 text-surface-900">Votre panier est vide</p>
+                    <p class="text-muted-color mb-4">Ajoutez des produits pour commencer votre commande.</p>
+                </div>
+                <Button
+                    label="Découvrir notre catalogue"
+                    icon="pi pi-arrow-right"
+                    iconPos="right"
+                    size="large"
+                    @click="router.push({ name: 'client-catalog' })"
+                />
+            </div>
         </div>
     </div>
 </template>
+
+<style scoped>
+/* Animation sur les items du panier */
+.space-y-4 > div {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.space-y-4 > div:hover {
+    transform: translateX(4px);
+    box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.1);
+}
+
+/* Animation sur les boutons */
+:deep(.p-button) {
+    transition: all 0.2s ease;
+}
+
+:deep(.p-button:hover:not(:disabled)) {
+    transform: scale(1.02);
+}
+
+:deep(.p-button:active:not(:disabled)) {
+    transform: scale(0.98);
+}
+
+/* Animation fade-in pour l'état vide */
+.flex.flex-column.align-items-center {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>

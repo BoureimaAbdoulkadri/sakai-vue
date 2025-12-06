@@ -45,10 +45,10 @@ async function submit() {
         </div>
         <form class="flex flex-column md:flex-row gap-3" @submit.prevent="submit">
             <div class="flex flex-column gap-2 flex-1">
-                <InputText v-model="email" type="email" placeholder="Votre email" class="w-full" />
+                <InputText v-model="email" type="email" placeholder="Votre email" fluid />
                 <small v-if="errorMessage" class="p-error">{{ errorMessage }}</small>
             </div>
-            <Button type="submit" label="S'inscrire" icon="pi pi-envelope" class="w-full md:w-auto" :loading="loading" />
+            <Button type="submit" label="S'inscrire" icon="pi pi-envelope" size="large" class="w-full md:w-auto" :loading="loading" />
         </form>
     </div>
 </template>

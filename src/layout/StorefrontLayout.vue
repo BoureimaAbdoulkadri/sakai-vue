@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { RouterLink, RouterView, useRoute } from 'vue-router';
 import { useCartStore } from '@/stores/cart';
+import Toast from 'primevue/toast';
 
 const route = useRoute();
 const showNavigation = computed(() => route.name !== 'landing');
@@ -39,5 +40,6 @@ const cartCount = computed(() => cartStore.itemCount);
         <footer v-if="showNavigation" class="bg-white border-t border-surface-200 py-6 text-center text-sm text-muted-color">
             © {{ new Date().getFullYear() }} EDO Commerce. Tous droits réservés.
         </footer>
+        <Toast position="top-right" />
     </div>
 </template>

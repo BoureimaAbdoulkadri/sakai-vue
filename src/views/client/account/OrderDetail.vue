@@ -1,7 +1,7 @@
 <template>
     <div class="grid">
         <div class="col-12 mb-3">
-            <RouterLink :to="{ name: 'client-orders' }" class="inline-flex align-items-center text-sm text-primary cursor-pointer">
+            <RouterLink :to="{ name: 'client-orders' }" class="inline-flex align-items-center text-sm text-primary cursor-pointer hover:underline">
                 <i class="pi pi-arrow-left mr-2" />
                 Retour à mes commandes
             </RouterLink>
@@ -41,28 +41,45 @@
             </Card>
         </div>
 
-        <div class="col-12" v-if="order">
+        <div class="col-12" v-if="order && !loading">
             <Card class="surface-card shadow-1 border-round">
-                <template #title>Articles de la commande</template>
-                <template #content>
-                    <div v-if="loading">
-                        <Skeleton height="2.5rem" class="mb-2" v-for="n in 3" :key="n" />
+                <template #title>
+                    <div class="flex align-items-center gap-2">
+                        <i class="pi pi-box text-primary"></i>
+                        <span>Articles de la commande</span>
                     </div>
-                    <div v-else>
-                        <DataTable :value="order.items || []" dataKey="product_id" responsive-layout="scroll">
-                            <Column field="product_name" header="Produit" />
-                            <Column field="quantity" header="Quantité" />
-                            <Column field="unit_price" header="Prix unitaire">
-                                <template #body="{ data }">
-                                    {{ formatMoney(data.unit_price) }}
-                                </template>
-                            </Column>
-                            <Column field="total" header="Total">
-                                <template #body="{ data }">
-                                    {{ formatMoney(data.total) }}
-                                </template>
-                            </Column>
-                        </DataTable>
+                </template>
+                <template #content>
+                    <DataTable
+                        v-if="order.items && order.items.length"
+                        :value="order.items"
+                        dataKey="product_id"
+                        responsive-layout="scroll"
+                        :rows="10"
+                    >
+                        <Column field="product_name" header="Produit">
+                            <template #body="{ data }">
+                                <span class="font-semibold">{{ data.product_name }}</span>
+                            </template>
+                        </Column>
+                        <Column field="quantity" header="Quantité" class="text-center">
+                            <template #body="{ data }">
+                                <Tag :value="'x' + data.quantity" severity="info" />
+                            </template>
+                        </Column>
+                        <Column field="unit_price" header="Prix unitaire">
+                            <template #body="{ data }">
+                                {{ formatMoney(data.unit_price) }}
+                            </template>
+                        </Column>
+                        <Column field="total" header="Total">
+                            <template #body="{ data }">
+                                <span class="font-semibold">{{ formatMoney(data.total) }}</span>
+                            </template>
+                        </Column>
+                    </DataTable>
+                    <div v-else class="text-center text-sm text-muted-color py-4">
+                        Aucun article dans cette commande.
                     </div>
                 </template>
             </Card>

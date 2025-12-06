@@ -14,8 +14,8 @@
         <div class="col-12">
             <Card class="surface-card shadow-1 border-round">
                 <template #content>
-                    <div v-if="loading">
-                        <Skeleton height="2.5rem" class="mb-2" v-for="n in 4" :key="n" />
+                    <div v-if="loading" class="p-3">
+                        <Skeleton height="3rem" class="mb-3" v-for="n in 5" :key="n" borderRadius="8px" />
                     </div>
                     <div v-else>
                         <DataTable
@@ -28,33 +28,46 @@
                             :totalRecords="pagination.total"
                             :first="(pagination.page - 1) * pagination.perPage"
                             @page="onPage"
-                            class="mt-2"
                         >
-                            <Column field="number" header="Commande" />
-                            <Column field="created_at" header="Date">
+                            <Column field="number" header="Commande" sortable />
+                            <Column field="created_at" header="Date" sortable>
                                 <template #body="{ data }">
                                     {{ formatDate(data.created_at) }}
                                 </template>
                             </Column>
-                            <Column field="total" header="Total">
+                            <Column field="total" header="Total" sortable>
                                 <template #body="{ data }">
                                     {{ formatMoney(data.total) }}
                                 </template>
                             </Column>
-                            <Column field="status" header="Statut">
+                            <Column field="status" header="Statut" sortable>
                                 <template #body="{ data }">
                                     <Tag :value="data.status" :severity="statusSeverity(data.status)" />
                                 </template>
                             </Column>
                             <Column header="Actions" body-class="text-right">
                                 <template #body="{ data }">
-                                    <Button icon="pi pi-search" label="Détails" size="small" text @click="goToOrder(data.id)" />
+                                    <Button icon="pi pi-search" label="Détails" size="small" text v-tooltip.top="'Voir les détails'" @click="goToOrder(data.id)" />
                                 </template>
                             </Column>
                         </DataTable>
 
-                        <div v-else class="text-center text-sm text-muted-color py-4">
-                            Vous n'avez pas encore de commande.
+                        <div v-else class="text-center py-8">
+                            <div class="flex flex-column align-items-center gap-3">
+                                <i class="pi pi-shopping-bag text-6xl text-surface-300"></i>
+                                <div>
+                                    <p class="text-lg font-semibold mb-1 text-surface-900">Aucune commande</p>
+                                    <p class="text-sm text-muted-color">
+                                        Vous n'avez pas encore passé de commande.
+                                    </p>
+                                </div>
+                                <Button
+                                    label="Découvrir nos produits"
+                                    icon="pi pi-arrow-right"
+                                    iconPos="right"
+                                    @click="$router.push({ name: 'client-catalog' })"
+                                />
+                            </div>
                         </div>
                     </div>
                 </template>

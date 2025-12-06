@@ -1,13 +1,13 @@
 <template>
-    <div class="flex justify-content-center">
+    <div class="flex justify-content-center py-6">
         <div class="w-full md:w-6 lg:w-4">
             <Card class="surface-card shadow-1 border-round">
                 <template #title>
-                    <span>Créer un compte client</span>
+                    <h1 class="text-2xl font-semibold mb-1">Créer un compte client</h1>
                 </template>
                 <template #subtitle>
                     <span class="text-sm text-muted-color">
-                        Créez votre compte pour suivre vos commandes.
+                        Créez votre compte pour suivre vos commandes et profiter de tous nos services.
                     </span>
                 </template>
                 <template #content>
@@ -18,7 +18,7 @@
 
                         <div class="field">
                             <label for="name" class="block font-semibold mb-2">Nom complet</label>
-                            <InputText id="name" v-model="form.name" class="w-full" autocomplete="name" />
+                            <InputText id="name" v-model="form.name" fluid autocomplete="name" />
                             <small v-if="fieldErrors.name" class="p-error">
                                 {{ fieldErrors.name }}
                             </small>
@@ -30,7 +30,7 @@
                                 id="email"
                                 v-model="form.email"
                                 type="email"
-                                class="w-full"
+                                fluid
                                 autocomplete="email"
                             />
                             <small v-if="fieldErrors.email" class="p-error">
@@ -45,8 +45,7 @@
                                 v-model="form.password"
                                 :feedback="true"
                                 toggleMask
-                                class="w-full"
-                                inputClass="w-full"
+                                fluid
                             />
                             <small v-if="fieldErrors.password" class="p-error">
                                 {{ fieldErrors.password }}
@@ -62,13 +61,13 @@
                                 v-model="form.password_confirmation"
                                 :feedback="false"
                                 toggleMask
-                                class="w-full"
-                                inputClass="w-full"
+                                fluid
                             />
                         </div>
 
                         <div class="flex align-items-center justify-content-between">
-                            <RouterLink :to="{ name: 'client-login' }" class="text-sm text-primary cursor-pointer">
+                            <RouterLink :to="{ name: 'client-login' }" class="text-sm text-primary cursor-pointer hover:underline">
+                                <i class="pi pi-sign-in mr-1" />
                                 Déjà un compte ? Se connecter
                             </RouterLink>
                         </div>

@@ -142,8 +142,8 @@ function statusSeverity(status) {
                     </Column>
                     <Column header="Actions" body-class="text-center">
                         <template #body="{ data }">
-                            <Button icon="pi pi-pencil" rounded text severity="secondary" class="mr-2" @click="openEdit(data)" />
-                            <Button icon="pi pi-trash" rounded text severity="danger" @click="confirmDeleteProduct(data)" />
+                            <Button icon="pi pi-pencil" rounded text severity="secondary" class="mr-2" v-tooltip.top="'Modifier'" @click="openEdit(data)" />
+                            <Button icon="pi pi-trash" rounded text severity="danger" v-tooltip.top="'Supprimer'" @click="confirmDeleteProduct(data)" />
                         </template>
                     </Column>
                 </DataTable>
