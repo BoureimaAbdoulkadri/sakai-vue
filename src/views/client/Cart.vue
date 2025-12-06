@@ -151,19 +151,6 @@ function removeItem(productId) {
     box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.1);
 }
 
-/* Animation sur les boutons */
-:deep(.p-button) {
-    transition: all 0.2s ease;
-}
-
-:deep(.p-button:hover:not(:disabled)) {
-    transform: scale(1.02);
-}
-
-:deep(.p-button:active:not(:disabled)) {
-    transform: scale(0.98);
-}
-
 /* Animation fade-in pour l'état vide */
 .flex.flex-column.align-items-center {
     animation: fadeIn 0.5s ease-in;

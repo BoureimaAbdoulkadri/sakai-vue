@@ -1,4 +1,6 @@
-@media screen and (min-width: 1960px) {
+@use './variables/_breakpoints' as bp;
+
+@media screen and (min-width: bp.$breakpoint-2xl) {
     .layout-main,
     .landing-wrapper {
         width: 1504px;
@@ -7,7 +9,7 @@
     }
 }
 
-@media (min-width: 992px) {
+@media (min-width: bp.$breakpoint-lg) {
     .layout-wrapper {
         &.layout-overlay {
             .layout-main-container {
@@ -63,7 +65,7 @@
     }
 }
 
-@media (max-width: 991px) {
+@media (max-width: #{bp.$breakpoint-lg - 1px}) {
     .blocked-scroll {
         overflow: hidden;
     }

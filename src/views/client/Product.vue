@@ -224,15 +224,6 @@ watch(
 </template>
 
 <style scoped>
-/* Animation sur l'image produit */
-:deep(.p-card img) {
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-:deep(.p-card:hover img) {
-    transform: scale(1.03);
-}
-
 /* Animation sur les boutons de taille */
 :deep(.p-selectbutton .p-button) {
     transition: all 0.2s ease;
@@ -240,19 +231,6 @@ watch(
 
 :deep(.p-selectbutton .p-button:hover) {
     transform: translateY(-2px);
-}
-
-/* Animation sur les boutons d'action */
-:deep(.p-button) {
-    transition: all 0.2s ease;
-}
-
-:deep(.p-button:hover:not(:disabled)) {
-    transform: scale(1.02);
-}
-
-:deep(.p-button:active:not(:disabled)) {
-    transform: scale(0.98);
 }
 
 /* Animation du contenu */

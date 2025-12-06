@@ -9,56 +9,120 @@ import FooterWidget from '@/components/landing/FooterWidget.vue';
 </script>
 
 <template>
-    <div class="bg-surface-0 dark:bg-surface-900 min-h-screen flex flex-column">
-        <!-- Header fixe professionnel -->
-        <header class="surface-card shadow-2 sticky top-0 z-5">
-            <div class="px-6 md:px-12 lg:px-20 py-4">
+    <div class="landing-shell">
+        <header class="landing-header">
+            <div class="landing-container">
                 <TopbarWidget />
             </div>
         </header>
 
-        <main class="flex-1">
-            <!-- Hero Section - Full viewport height avec impact visuel -->
-            <section id="hero" class="relative">
+        <main class="landing-main">
+            <section id="hero" class="landing-section landing-section--hero">
                 <HeroWidget />
             </section>
 
-            <!-- USP Strip - Juste après le hero pour rassurer -->
-            <section id="usp" class="px-6 md:px-12 lg:px-20 py-8 surface-100">
-                <UspStrip />
+            <section id="usp" class="landing-section landing-section--stripe landing-section--compact">
+                <div class="landing-container">
+                    <UspStrip />
+                </div>
             </section>
 
-            <!-- Collections - Section importante avec bon espacement -->
-            <section id="categories" class="px-6 md:px-12 lg:px-20 py-12">
-                <CategoriesPreview />
+            <section id="categories" class="landing-section landing-section--compact">
+                <div class="landing-container">
+                    <CategoriesPreview />
+                </div>
             </section>
 
-            <!-- Featured Products - Produits mis en avant -->
-            <section id="featured-products" class="px-6 md:px-12 lg:px-20 py-12 surface-50">
-                <FeaturedProductsPreview />
+            <section id="featured-products" class="landing-section landing-section--muted landing-section--compact">
+                <div class="landing-container">
+                    <FeaturedProductsPreview />
+                </div>
             </section>
 
-            <!-- Newsletter - Avant le footer pour capter l'attention -->
-            <section id="newsletter" class="px-6 md:px-12 lg:px-20 py-12">
-                <NewsletterWidget />
+            <section id="newsletter" class="landing-section landing-section--compact">
+                <div class="landing-container">
+                    <NewsletterWidget />
+                </div>
             </section>
         </main>
 
-        <!-- Footer professionnel e-commerce -->
-        <footer>
-            <FooterWidget />
+        <footer class="landing-footer">
+            <div class="landing-container">
+                <FooterWidget />
+            </div>
         </footer>
     </div>
 </template>
 
 <style scoped>
-/* Smooth scroll behavior */
-html {
+:global(html) {
     scroll-behavior: smooth;
 }
 
-/* Section backgrounds alternées pour rythme visuel */
-section:nth-child(even) {
-    background-color: var(--surface-50);
+
+.landing-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--surface-0), transparent 0%), color-mix(in srgb, var(--surface-ground), transparent 10%));
+    color: var(--text-color);
+}
+
+.landing-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(18px);
+    background: color-mix(in srgb, var(--surface-card), transparent 20%);
+    border-bottom: 1px solid color-mix(in srgb, var(--surface-border), transparent 50%);
+}
+
+.landing-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.landing-footer {
+    border-top: 1px solid var(--surface-border);
+    background: color-mix(in srgb, var(--surface-0), transparent 5%);
+}
+
+.landing-section {
+    padding: clamp(3.5rem, 7vw, 6.5rem) 0;
+}
+
+.landing-section--compact {
+    padding: clamp(2.25rem, 5vw, 4.5rem) 0;
+}
+
+.landing-section--hero {
+    padding-top: clamp(1rem, 4vw, 2.5rem);
+    background: linear-gradient(180deg, rgba(6, 8, 12, 0.65) 0%, rgba(6, 8, 12, 0.35) 45%, transparent 100%);
+}
+
+.landing-section--stripe {
+    background: color-mix(in srgb, var(--surface-card), transparent 70%);
+}
+
+.landing-section--muted {
+    background: color-mix(in srgb, var(--surface-card), transparent 65%);
+}
+
+.landing-container {
+    width: min(1180px, 100% - clamp(2.5rem, 8vw, 6rem));
+    margin: 0 auto;
+    padding: 0 clamp(1.25rem, 2.5vw, 2rem);
+}
+
+@media (max-width: 768px) {
+    .landing-header {
+        backdrop-filter: blur(8px);
+    }
+
+    .landing-container {
+        width: 100%;
+        padding: 0 1.25rem;
+    }
 }
 </style>

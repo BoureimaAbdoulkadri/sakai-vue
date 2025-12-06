@@ -30,3 +30,57 @@
     border-color: var(--color-gray-200, currentcolor);
   }
 }
+
+@layer components {
+  .p-button {
+    transition-property: background-color, border-color, box-shadow, transform;
+    transition-duration: var(--transition-duration, 0.2s);
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .p-button:not(.p-disabled):hover {
+    transform: translateY(-1px);
+  }
+
+  .p-button:not(.p-disabled):active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  .p-card,
+  .card {
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+  }
+
+  .p-card:hover,
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 35px rgba(15, 23, 42, 0.12);
+  }
+
+  .p-card img {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .p-card:hover img {
+    transform: scale(1.03);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @layer components {
+    .p-button,
+    .p-card,
+    .card,
+    .p-card img {
+      transition: none !important;
+    }
+
+    .p-button:not(.p-disabled):hover,
+    .p-button:not(.p-disabled):active,
+    .p-card:hover,
+    .card:hover,
+    .p-card:hover img {
+      transform: none !important;
+    }
+  }
+}

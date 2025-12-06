@@ -1,4 +1,5 @@
 @use 'mixins' as *;
+@use './variables/_breakpoints' as bp;
 
 .layout-topbar {
     position: fixed;
@@ -96,7 +97,7 @@
     }
 }
 
-@media (max-width: 991px) {
+@media (max-width: #{bp.$breakpoint-lg - 1px}) {
     .layout-topbar {
         padding: 0 2rem;
 

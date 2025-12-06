@@ -12,6 +12,7 @@ import ToastService from 'primevue/toastservice';
 import i18n from './i18n';
 
 import '@/assets/tailwind.css';
+import 'primeflex/primeflex.css';
 import '@/assets/styles.scss';
 
 const app = createApp(App);

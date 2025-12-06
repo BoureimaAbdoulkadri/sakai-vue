@@ -1,69 +1,217 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Button from 'primevue/button';
+import Carousel from 'primevue/carousel';
 
 const router = useRouter();
+
+// Slides du carousel hero
+const heroSlides = ref([
+    {
+        title: 'Collection Printemps / Été 2025',
+        subtitle: 'Mode Enfant',
+        description: 'Des vêtements confortables et colorés pour vos enfants',
+        image: 'https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?w=1200&h=800&fit=crop',
+        cta: 'Découvrir Enfant',
+        color: 'primary'
+    },
+    {
+        title: 'Élégance & Confort',
+        subtitle: 'Mode Femme',
+        description: 'Collections tendances pour toutes les occasions',
+        image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1200&h=800&fit=crop',
+        cta: 'Découvrir Femme',
+        color: 'pink'
+    },
+    {
+        title: 'Style & Performance',
+        subtitle: 'Mode Homme',
+        description: 'Des pièces intemporelles et modernes',
+        image: 'https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?w=1200&h=800&fit=crop',
+        cta: 'Découvrir Homme',
+        color: 'cyan'
+    }
+]);
 
 function goToShop() {
     router.push({ name: 'client-catalog' });
 }
-
-function goToFeatured() {
-    const section = document.getElementById('featured-products');
-    if (section) {
-        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-}
 </script>
 
 <template>
-    <section class="px-6 md:px-12 lg:px-20 py-12 md:py-16 lg:py-20">
-        <div class="grid align-items-center">
-            <!-- Colonne texte -->
-            <div class="col-12 md:col-6 text-center md:text-left">
-                <!-- Titre principal -->
-                <h1 class="text-4xl md:text-5xl font-bold text-surface-900 mb-4">
-                    Mode Enfant,<br />Femme & Homme
-                </h1>
+    <div class="hero-section relative">
+        <Carousel
+            :value="heroSlides"
+            :numVisible="1"
+            :numScroll="1"
+            :circular="true"
+            :autoplayInterval="5000"
+            class="hero-carousel"
+        >
+            <template #item="{ data }">
+                <div class="hero-slide relative">
+                    <!-- Image de fond avec overlay -->
+                    <div class="hero-image-wrapper">
+                        <img :src="data.image" :alt="data.subtitle" class="hero-image" />
+                        <div class="hero-overlay"></div>
+                    </div>
 
-                <!-- Sous-titre -->
-                <p class="text-lg text-surface-700 mb-6">
-                    Découvrez nos collections pensées pour toute la famille : coupes modernes, matières confortables et pièces incontournables du quotidien.
-                </p>
+                    <!-- Contenu -->
+                    <div class="hero-content relative">
+                        <div class="max-w-4xl">
+                            <span class="hero-badge inline-flex align-items-center gap-2 px-4 py-2 bg-white text-primary border-round-xl mb-4 shadow-2">
+                                <i class="pi pi-sparkles"></i>
+                                <span class="font-semibold text-sm">{{ data.title }}</span>
+                            </span>
 
-                <!-- Boutons CTAs -->
-                <div class="flex flex-column sm:flex-row gap-3 justify-content-center md:justify-content-start">
-                    <Button
-                        label="Découvrir la boutique"
-                        icon="pi pi-shopping-bag"
-                        iconPos="right"
-                        size="large"
-                        @click="goToShop"
-                    />
-                    <Button
-                        label="Voir les nouveautés"
-                        icon="pi pi-arrow-right"
-                        iconPos="right"
-                        severity="secondary"
-                        outlined
-                        size="large"
-                        @click="goToFeatured"
-                    />
+                            <h1 class="hero-title text-white text-5xl md:text-6xl lg:text-7xl font-bold mb-4">
+                                {{ data.subtitle }}
+                            </h1>
+
+                            <p class="hero-description text-white text-xl md:text-2xl mb-6 opacity-90">
+                                {{ data.description }}
+                            </p>
+
+                            <div class="flex flex-wrap gap-3">
+                                <Button
+                                    :label="data.cta"
+                                    icon="pi pi-shopping-bag"
+                                    iconPos="right"
+                                    size="large"
+                                    class="px-8 py-4 font-semibold text-lg"
+                                    @click="goToShop"
+                                />
+                                <Button
+                                    label="Voir tout"
+                                    icon="pi pi-arrow-right"
+                                    iconPos="right"
+                                    severity="secondary"
+                                    outlined
+                                    size="large"
+                                    class="px-8 py-4 font-semibold text-lg bg-white-alpha-20"
+                                    @click="goToShop"
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </template>
+        </Carousel>
 
-            <!-- Colonne visuel -->
-            <div class="col-12 md:col-6 flex justify-content-center align-items-center mt-6 md:mt-0">
-                <div class="surface-card shadow-2 border-round-2xl p-8 text-center" style="max-width: 500px; width: 100%;">
-                    <i class="pi pi-images text-6xl text-surface-300 mb-4"></i>
-                    <p class="text-surface-600 font-semibold mb-2">Visuel collection</p>
-                    <p class="text-surface-500 text-sm m-0">1200 x 800px</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    </div>
 </template>
 
 <style scoped>
-/* Pas de styles personnalisés nécessaires - on utilise PrimeFlex */
+.hero-section {
+    margin-bottom: clamp(3.5rem, 7vw, 6rem);
+}
+
+.hero-carousel :deep(.p-carousel-content) {
+    position: relative;
+}
+
+.hero-slide {
+    position: relative;
+    min-height: 68vh;
+    display: flex;
+    align-items: center;
+}
+
+.hero-image-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(120deg, rgba(3, 6, 12, 0.78) 0%, rgba(6, 8, 12, 0.2) 60%);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 5;
+    padding: clamp(3rem, 8vw, 6rem) clamp(2rem, 6vw, 6rem) clamp(4rem, 10vw, 7rem);
+}
+
+.hero-badge {
+    animation: fadeInDown 0.8s ease-out;
+}
+
+.hero-title {
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+    text-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
+}
+
+.hero-description {
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+    color: color-mix(in srgb, #fff, transparent 10%);
+}
+
+.hero-content .flex {
+    animation: fadeInUp 0.8s ease-out 0.6s both;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Customisation des indicateurs du carousel */
+.hero-carousel :deep(.p-carousel-indicators) {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+.hero-carousel :deep(.p-carousel-indicator button) {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    border: 2px solid white;
+}
+
+.hero-carousel :deep(.p-carousel-indicator.p-highlight button) {
+    background: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-slide {
+        min-height: 60vh;
+    }
+}
 </style>

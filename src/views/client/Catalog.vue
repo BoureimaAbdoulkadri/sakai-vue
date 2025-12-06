@@ -243,35 +243,4 @@ function addToCart(product) {
     overflow: hidden;
 }
 
-/* Micro-animations sur les cartes produits */
-:deep(.p-card) {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-}
-
-:deep(.p-card:hover) {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.15);
-}
-
-:deep(.p-card:hover img) {
-    transform: scale(1.05);
-}
-
-:deep(.p-card img) {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Animation sur les boutons */
-:deep(.p-button) {
-    transition: all 0.2s ease;
-}
-
-:deep(.p-button:hover:not(:disabled)) {
-    transform: scale(1.05);
-}
-
-:deep(.p-button:active:not(:disabled)) {
-    transform: scale(0.98);
-}
 </style>

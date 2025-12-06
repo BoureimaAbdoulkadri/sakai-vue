@@ -4,46 +4,40 @@ import Button from 'primevue/button';
 
 const router = useRouter();
 
+const navItems = [
+    { label: 'Collections', target: 'categories' },
+    { label: 'Nouveautés', target: 'featured-products' },
+    { label: 'Newsletter', target: 'newsletter' }
+];
+
 function smoothScroll(id) {
     const element = document.getElementById(id);
     if (element) {
-        element.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-        });
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 }
 </script>
 
 <template>
-    <div class="w-full flex align-items-center justify-content-between">
-        <!-- Logo -->
-        <RouterLink :to="{ name: 'landing' }" class="flex align-items-center gap-2 cursor-pointer">
-            <i class="pi pi-shopping-bag text-primary text-4xl"></i>
-            <span class="text-surface-900 dark:text-surface-0 font-bold text-2xl">EDO</span>
+    <div class="landing-topbar">
+        <RouterLink :to="{ name: 'landing' }" class="landing-topbar__brand">
+            <i class="pi pi-shopping-bag"></i>
+            <span>EDO</span>
         </RouterLink>
 
-        <!-- Navigation Desktop -->
-        <nav class="hidden lg:flex align-items-center gap-6">
-            <a @click="smoothScroll('categories')" class="text-surface-700 hover:text-primary cursor-pointer font-medium transition-colors">
-                Collections
-            </a>
-            <a @click="smoothScroll('featured-products')" class="text-surface-700 hover:text-primary cursor-pointer font-medium transition-colors">
-                Nouveautés
-            </a>
-            <a @click="smoothScroll('newsletter')" class="text-surface-700 hover:text-primary cursor-pointer font-medium transition-colors">
-                Newsletter
-            </a>
+        <nav class="landing-topbar__nav">
+            <button v-for="item in navItems" :key="item.target" type="button" @click="smoothScroll(item.target)">
+                {{ item.label }}
+            </button>
         </nav>
 
-        <!-- Actions -->
-        <div class="flex align-items-center gap-3">
+        <div class="landing-topbar__actions">
             <Button
                 label="Se connecter"
                 text
                 size="small"
+                class="landing-topbar__ghost"
                 @click="router.push({ name: 'client-login' })"
-                class="hidden md:inline-flex"
             />
             <Button
                 label="Voir la boutique"
@@ -57,23 +51,103 @@ function smoothScroll(id) {
 </template>
 
 <style scoped>
-a {
-    position: relative;
+.landing-topbar {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1.5rem;
+    align-items: center;
+    padding: 1.25rem 0;
 }
 
-a::after {
+.landing-topbar__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-weight: 600;
+    font-size: 1.4rem;
+    letter-spacing: 0.12em;
+    color: var(--text-color);
+    text-transform: uppercase;
+}
+
+.landing-topbar__brand i {
+    font-size: 1.35rem;
+    color: var(--primary-color);
+}
+
+.landing-topbar__nav {
+    display: none;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.landing-topbar__nav button {
+    background: transparent;
+    border: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--text-color), transparent 25%);
+    cursor: pointer;
+    position: relative;
+    padding: 0.25rem 0;
+    transition: color 0.3s ease;
+}
+
+.landing-topbar__nav button::after {
     content: '';
     position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: -4px;
-    left: 50%;
-    background-color: var(--primary-color);
-    transition: all 0.3s ease;
-    transform: translateX(-50%);
+    left: 0;
+    bottom: -6px;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+    opacity: 0.4;
 }
 
-a:hover::after {
-    width: 100%;
+.landing-topbar__nav button:hover {
+    color: var(--text-color);
+}
+
+.landing-topbar__nav button:hover::after {
+    transform: scaleX(1);
+}
+
+.landing-topbar__actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.landing-topbar__ghost {
+    border-radius: 999px;
+    border-color: color-mix(in srgb, var(--text-color), transparent 65%);
+    color: color-mix(in srgb, var(--text-color), transparent 10%);
+}
+
+@media (min-width: 992px) {
+    .landing-topbar__nav {
+        display: inline-flex;
+    }
+
+    .landing-topbar__actions .p-button-text {
+        display: inline-flex;
+    }
+}
+
+@media (max-width: 991px) {
+    .landing-topbar {
+        grid-template-columns: auto auto;
+        grid-template-rows: auto auto;
+    }
+
+    .landing-topbar__actions {
+        grid-column: 1 / -1;
+        justify-content: flex-start;
+    }
 }
 </style>
