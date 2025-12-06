@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import Dropdown from 'primevue/dropdown';
 import Slider from 'primevue/slider';
 import Skeleton from 'primevue/skeleton';
+import { useToast } from 'primevue/usetoast';
 import { useClientProducts } from '@/composables/client/useClientProducts';
+import { useCartStore } from '@/stores/cart';
 
 type CategoryKey = 'kids' | 'women' | 'men';
 type SortKey = 'newest' | 'price-asc' | 'price-desc';
 
 interface NormalizedProduct {
     id: number | string;
+    slug: string;
     name: string;
     categoryKey: CategoryKey | null;
     genderLabel: string;
@@ -19,6 +23,10 @@ interface NormalizedProduct {
     isNew: boolean;
     imageUrl: string;
 }
+
+const router = useRouter();
+const toast = useToast();
+const cartStore = useCartStore();
 
 const { products, loading } = useClientProducts();
 
@@ -34,6 +42,7 @@ const mobileFiltersOpen = ref(false);
 const curatedProducts: NormalizedProduct[] = [
     {
         id: 'curated-1',
+        slug: 'curated-1',
         name: 'Chaise de bureau',
         categoryKey: null,
         genderLabel: 'Électronique',
@@ -43,6 +52,7 @@ const curatedProducts: NormalizedProduct[] = [
     },
     {
         id: 'curated-2',
+        slug: 'curated-2',
         name: 'Vélo de route',
         categoryKey: null,
         genderLabel: 'Électronique',
@@ -52,6 +62,7 @@ const curatedProducts: NormalizedProduct[] = [
     },
     {
         id: 'curated-3',
+        slug: 'curated-3',
         name: 'Smartphone X',
         categoryKey: null,
         genderLabel: 'Maison',
@@ -70,6 +81,7 @@ const normalizedProducts = computed<NormalizedProduct[]>(() => {
 
         return {
             id: product.id ?? product.slug ?? product.name,
+            slug: String(product.slug ?? product.id ?? product.name ?? ''),
             name: product.name ?? 'Produit',
             categoryKey: mappedCategory,
             genderLabel: product.category?.name ?? product.genderLabel ?? 'Collection',
@@ -153,6 +165,31 @@ const featuredProducts = computed(() => {
     const picks = sortedProducts.value.slice(0, 3);
     return picks.length ? picks : curatedProducts;
 });
+
+function goToProduct(product: NormalizedProduct) {
+    if (!product.slug) return;
+    router.push({ name: 'client-product', params: { slug: product.slug } });
+}
+
+function addToCart(product: NormalizedProduct) {
+    if (!product.slug) return;
+    cartStore.addItem(
+        {
+            id: product.id,
+            name: product.name,
+            slug: product.slug,
+            price: product.price,
+            image_url: product.imageUrl
+        },
+        1
+    );
+    toast.add({
+        severity: 'success',
+        summary: 'Ajouté au panier',
+        detail: `${product.name} a été ajouté à votre panier`,
+        life: 2500
+    });
+}
 </script>
 
 <template>
@@ -257,7 +294,13 @@ const featuredProducts = computed(() => {
 
                 <div v-else class="product-grid">
                     <article v-for="product in sortedProducts" :key="product.id" class="product-card">
-                        <div class="product-media" :style="{ backgroundImage: `url(${product.imageUrl})` }">
+                        <div
+                            class="product-media"
+                            :style="{ backgroundImage: `url(${product.imageUrl})` }"
+                            role="button"
+                            tabindex="0"
+                            @click="goToProduct(product)"
+                        >
                             <span class="product-badge" v-if="product.isNew">Nouveau</span>
                         </div>
                         <div class="product-body">
@@ -267,7 +310,18 @@ const featuredProducts = computed(() => {
                             </div>
                             <h3>{{ product.name }}</h3>
                             <div class="product-footer">
-                                <Button label="Voir la fiche" text icon="pi pi-arrow-right" iconPos="right" />
+                                <Button
+                                    label="Voir"
+                                    text
+                                    icon="pi pi-arrow-right"
+                                    iconPos="right"
+                                    @click="goToProduct(product)"
+                                />
+                                <Button
+                                    text
+                                    icon="pi pi-shopping-cart"
+                                    @click="addToCart(product)"
+                                />
                             </div>
                         </div>
                     </article>
@@ -506,6 +560,9 @@ const featuredProducts = computed(() => {
 
 .product-footer {
     margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
 .catalog-reco {
