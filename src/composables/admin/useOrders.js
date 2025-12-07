@@ -1,11 +1,13 @@
-import { ref, reactive, computed, onMounted } from 'vue';
-import { useToast } from 'primevue/usetoast';
-import { useConfirm } from 'primevue/useconfirm';
-import { fetchOrdersPaginated, fetchOrderDetail, updateOrderStatus } from '@/services/admin/ordersService';
+import {computed, onMounted, reactive, ref} from 'vue';
+import {useToast} from 'primevue/usetoast';
+import {useConfirm} from 'primevue/useconfirm';
+import {fetchOrderDetail, fetchOrdersPaginated, updateOrderStatus} from '@/services/admin/ordersService';
+import {useExport} from '@/composables/useExport';
 
 export function useOrders() {
     const toast = useToast();
     const confirm = useConfirm();
+    const {downloadCSV, downloadExcel, formatPrice, formatDate} = useExport();
 
     const orders = ref([]);
     const loading = ref(false);
@@ -179,6 +181,68 @@ export function useOrders() {
         }
     }
 
+    function exportCSV() {
+        const exportColumns = [
+            {field: 'order_number', header: 'N° Commande'},
+            {
+                field: 'customer',
+                header: 'Client',
+                exportFormatter: (_, row) => row.customer?.name || ''
+            },
+            {
+                field: 'customer',
+                header: 'Email',
+                exportFormatter: (_, row) => row.customer?.email || ''
+            },
+            {
+                field: 'total_amount',
+                header: 'Montant',
+                exportFormatter: (value, row) => formatPrice(value, row.currency || 'EUR')
+            },
+            {field: 'status', header: 'Statut'},
+            {field: 'payment_status', header: 'Paiement'},
+            {
+                field: 'created_at',
+                header: 'Date',
+                exportFormatter: (value) => formatDate(value)
+            }
+        ];
+
+        const filename = `commandes_${new Date().toISOString().split('T')[0]}.csv`;
+        downloadCSV(orders.value, exportColumns, filename);
+    }
+
+    function exportExcel() {
+        const exportColumns = [
+            {field: 'order_number', header: 'N° Commande'},
+            {
+                field: 'customer',
+                header: 'Client',
+                exportFormatter: (_, row) => row.customer?.name || ''
+            },
+            {
+                field: 'customer',
+                header: 'Email',
+                exportFormatter: (_, row) => row.customer?.email || ''
+            },
+            {
+                field: 'total_amount',
+                header: 'Montant',
+                exportFormatter: (value, row) => formatPrice(value, row.currency || 'EUR')
+            },
+            {field: 'status', header: 'Statut'},
+            {field: 'payment_status', header: 'Paiement'},
+            {
+                field: 'created_at',
+                header: 'Date',
+                exportFormatter: (value) => formatDate(value)
+            }
+        ];
+
+        const filename = `commandes_${new Date().toISOString().split('T')[0]}.xlsx`;
+        downloadExcel(orders.value, exportColumns, filename);
+    }
+
     async function init() {
         await loadOrders();
     }
@@ -210,6 +274,8 @@ export function useOrders() {
         openOrder,
         closeOrderDialog,
         saveOrderStatus,
+        exportCSV,
+        exportExcel,
         init
     };
 }

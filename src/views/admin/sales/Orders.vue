@@ -35,6 +35,10 @@
                         <Calendar v-model="dateFrom" dateFormat="dd/mm/yy" placeholder="Du" showIcon class="w-full md:w-10rem" />
                         <Calendar v-model="dateTo" dateFormat="dd/mm/yy" placeholder="Au" showIcon class="w-full md:w-10rem" />
                         <Button icon="pi pi-filter" label="Appliquer" severity="secondary" @click="onFilterChange" />
+                        <Button v-tooltip.top="'Exporter en Excel'" icon="pi pi-file-excel" label="Excel" outlined severity="success"
+                                @click="exportExcel"/>
+                        <Button v-tooltip.top="'Exporter en CSV'" icon="pi pi-file" label="CSV" outlined severity="secondary"
+                                @click="exportCSV"/>
                     </div>
                 </div>
 
@@ -170,8 +174,8 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { useOrders } from '@/composables/admin/useOrders';
+import {computed} from 'vue';
+import {useOrders} from '@/composables/admin/useOrders';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
@@ -203,7 +207,9 @@ const {
     onFilterChange,
     openOrder,
     closeOrderDialog,
-    saveOrderStatus
+    saveOrderStatus,
+    exportCSV,
+    exportExcel
 } = useOrders();
 
 const dialogTitle = computed(() => (selectedOrder.value ? `Commande ${selectedOrder.value.order_number}` : 'Commande'));

@@ -1,17 +1,19 @@
-import { ref, reactive, computed, onMounted } from 'vue';
-import { useToast } from 'primevue/usetoast';
-import { useConfirm } from 'primevue/useconfirm';
+import {computed, onMounted, reactive, ref} from 'vue';
+import {useToast} from 'primevue/usetoast';
+import {useConfirm} from 'primevue/useconfirm';
 import {
-    fetchCustomersPaginated,
-    fetchCustomerDetail,
     createCustomer,
-    updateCustomer,
-    deleteCustomer
+    deleteCustomer,
+    fetchCustomerDetail,
+    fetchCustomersPaginated,
+    updateCustomer
 } from '@/services/admin/customersService';
+import {useExport} from '@/composables/useExport';
 
 export function useCustomers() {
     const toast = useToast();
     const confirm = useConfirm();
+    const {downloadCSV, downloadExcel, formatPrice, formatDateShort} = useExport();
 
     const customers = ref([]);
     const loading = ref(false);
@@ -264,6 +266,94 @@ export function useCustomers() {
         }
     }
 
+    function exportCSV() {
+        const exportColumns = [
+            {field: 'id', header: 'ID'},
+            {
+                field: 'full_name',
+                header: 'Nom complet',
+                exportFormatter: (_, row) => {
+                    if (row.full_name) return row.full_name;
+                    return [row.first_name, row.last_name].filter(Boolean).join(' ');
+                }
+            },
+            {field: 'email', header: 'Email'},
+            {field: 'phone', header: 'Téléphone'},
+            {field: 'company_name', header: 'Société'},
+            {
+                field: 'type',
+                header: 'Type',
+                exportFormatter: (value) => (value === 'company' ? 'Entreprise' : 'Particulier')
+            },
+            {field: 'status', header: 'Statut'},
+            {field: 'city', header: 'Ville'},
+            {field: 'country', header: 'Pays'},
+            {
+                field: 'total_spent',
+                header: 'CA Total',
+                exportFormatter: (value) => formatPrice(value)
+            },
+            {field: 'total_orders', header: 'Nb Commandes'},
+            {
+                field: 'last_order_date',
+                header: 'Dernière Commande',
+                exportFormatter: (value) => formatDateShort(value)
+            },
+            {
+                field: 'created_at',
+                header: 'Créé le',
+                exportFormatter: (value) => formatDateShort(value)
+            }
+        ];
+
+        const filename = `clients_${new Date().toISOString().split('T')[0]}.csv`;
+        downloadCSV(customers.value, exportColumns, filename);
+    }
+
+    function exportExcel() {
+        const exportColumns = [
+            {field: 'id', header: 'ID'},
+            {
+                field: 'full_name',
+                header: 'Nom complet',
+                exportFormatter: (_, row) => {
+                    if (row.full_name) return row.full_name;
+                    return [row.first_name, row.last_name].filter(Boolean).join(' ');
+                }
+            },
+            {field: 'email', header: 'Email'},
+            {field: 'phone', header: 'Téléphone'},
+            {field: 'company_name', header: 'Société'},
+            {
+                field: 'type',
+                header: 'Type',
+                exportFormatter: (value) => (value === 'company' ? 'Entreprise' : 'Particulier')
+            },
+            {field: 'status', header: 'Statut'},
+            {field: 'city', header: 'Ville'},
+            {field: 'country', header: 'Pays'},
+            {
+                field: 'total_spent',
+                header: 'CA Total',
+                exportFormatter: (value) => formatPrice(value)
+            },
+            {field: 'total_orders', header: 'Nb Commandes'},
+            {
+                field: 'last_order_date',
+                header: 'Dernière Commande',
+                exportFormatter: (value) => formatDateShort(value)
+            },
+            {
+                field: 'created_at',
+                header: 'Créé le',
+                exportFormatter: (value) => formatDateShort(value)
+            }
+        ];
+
+        const filename = `clients_${new Date().toISOString().split('T')[0]}.xlsx`;
+        downloadExcel(customers.value, exportColumns, filename);
+    }
+
     async function init() {
         await loadCustomers();
     }
@@ -297,6 +387,8 @@ export function useCustomers() {
         hideDialog,
         saveCustomer,
         confirmDeleteCustomer,
+        exportCSV,
+        exportExcel,
         init
     };
 }

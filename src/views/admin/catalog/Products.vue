@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from 'vue';
-import { useProducts } from '@/composables/admin/useProducts';
+import {computed} from 'vue';
+import {useProducts} from '@/composables/admin/useProducts';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
@@ -23,12 +23,17 @@ const {
     categoryOptions,
     productDialog,
     form,
+    selectedProducts,
     openNew,
     openEdit,
     hideDialog,
     saveProduct,
     confirmDeleteProduct,
-    onPage
+    onPage,
+    exportCSV,
+    exportExcel,
+    bulkDelete,
+    bulkUpdateStatus
 } = useProducts();
 
 const dialogStatusOptions = computed(() => statusOptions.filter((option) => option.value !== null));
@@ -89,11 +94,25 @@ function statusSeverity(status) {
                             class="w-full md:w-14rem"
                             showClear
                         />
+                        <Button v-tooltip.top="'Exporter en Excel'" icon="pi pi-file-excel" label="Excel" outlined severity="success"
+                                @click="exportExcel"/>
+                        <Button v-tooltip.top="'Exporter en CSV'" icon="pi pi-file" label="CSV" outlined severity="secondary"
+                                @click="exportCSV"/>
                         <Button icon="pi pi-plus" label="Nouveau produit" severity="primary" @click="openNew" />
                     </div>
                 </div>
 
+                <div v-if="selectedProducts.length > 0"
+                     class="mb-3 p-3 surface-100 border-round flex align-items-center gap-3">
+                    <span class="font-semibold">{{ selectedProducts.length }} produit(s) sélectionné(s)</span>
+                    <Button icon="pi pi-check" label="Publier" size="small" @click="bulkUpdateStatus('published')"/>
+                    <Button icon="pi pi-archive" label="Archiver" severity="secondary" size="small"
+                            @click="bulkUpdateStatus('archived')"/>
+                    <Button icon="pi pi-trash" label="Supprimer" severity="danger" size="small" @click="bulkDelete"/>
+                </div>
+
                 <DataTable
+                    v-model:selection="selectedProducts"
                     :value="products"
                     :loading="loading"
                     lazy
@@ -106,6 +125,7 @@ function statusSeverity(status) {
                     responsive-layout="scroll"
                     class="mt-3"
                 >
+                    <Column headerStyle="width: 3rem" selectionMode="multiple"/>
                     <Column field="name" header="Nom" sortable>
                         <template #body="{ data }">
                             <div class="flex flex-column">

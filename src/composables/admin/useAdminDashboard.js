@@ -1,6 +1,6 @@
-import { ref, reactive, computed, onMounted } from 'vue';
-import { useToast } from 'primevue/usetoast';
-import { fetchDashboardOverview } from '@/services/admin/dashboardService';
+import {computed, onMounted, reactive, ref} from 'vue';
+import {useToast} from 'primevue/usetoast';
+import {fetchDashboardOverview} from '@/services/admin/dashboardService';
 
 function getCssVar(value, fallback) {
     if (typeof window === 'undefined') return fallback;
@@ -35,13 +35,31 @@ export function useAdminDashboard() {
         values: []
     });
 
+    const revenueByCategory = reactive({
+        labels: [],
+        values: []
+    });
+
+    const customersOverTime = reactive({
+        labels: [],
+        values: []
+    });
+
+    const topProducts = reactive({
+        labels: [],
+        values: []
+    });
+
     const recentOrders = ref([]);
 
     const hasData = computed(
         () =>
             revenueChart.labels.length > 0 ||
             ordersByStatus.labels.length > 0 ||
-            recentOrders.value.length > 0
+            recentOrders.value.length > 0 ||
+            revenueByCategory.labels.length > 0 ||
+            customersOverTime.labels.length > 0 ||
+            topProducts.labels.length > 0
     );
 
     const revenueChartData = computed(() => {
@@ -180,6 +198,178 @@ export function useAdminDashboard() {
         };
     });
 
+    const revenueByCategoryChartData = computed(() => {
+        const colorPalette = [
+            getCssVar('--primary-500', '#6366F1'),
+            getCssVar('--blue-500', '#3B82F6'),
+            getCssVar('--green-500', '#10B981'),
+            getCssVar('--orange-500', '#F59E0B'),
+            getCssVar('--purple-500', '#8B5CF6'),
+            getCssVar('--pink-500', '#EC4899')
+        ];
+
+        return {
+            labels: revenueByCategory.labels,
+            datasets: [
+                {
+                    data: revenueByCategory.values,
+                    backgroundColor: colorPalette.slice(0, revenueByCategory.labels.length),
+                    hoverBackgroundColor: colorPalette.slice(0, revenueByCategory.labels.length)
+                }
+            ]
+        };
+    });
+
+    const revenueByCategoryChartOptions = computed(() => {
+        const textColor = getCssVar('--text-color', '#334155');
+
+        return {
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: textColor,
+                        usePointStyle: true,
+                        padding: 15
+                    },
+                    position: 'bottom'
+                },
+                tooltip: {
+                    callbacks: {
+                        label(context) {
+                            const label = context.label || '';
+                            const value = context.parsed ?? 0;
+                            const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
+                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            const formatted = new Intl.NumberFormat('fr-FR', {
+                                style: 'currency',
+                                currency: 'EUR'
+                            }).format(value);
+                            return `${label}: ${formatted} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        };
+    });
+
+    const customersOverTimeChartData = computed(() => {
+        const blueColor = getCssVar('--blue-500', '#3B82F6');
+        const blueLight = getCssVar('--blue-100', 'rgba(59,130,246,0.2)');
+        const textColor = getCssVar('--text-color', '#334155');
+
+        return {
+            labels: customersOverTime.labels,
+            datasets: [
+                {
+                    label: 'Nouveaux clients',
+                    data: customersOverTime.values,
+                    fill: true,
+                    tension: 0.4,
+                    borderColor: blueColor,
+                    backgroundColor: blueLight,
+                    pointBackgroundColor: blueColor,
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    borderWidth: 3,
+                    color: textColor
+                }
+            ]
+        };
+    });
+
+    const customersOverTimeChartOptions = computed(() => {
+        const textColor = getCssVar('--text-color', '#334155');
+        const textColorSecondary = getCssVar('--text-color-secondary', '#94a3b8');
+        const surfaceBorder = getCssVar('--surface-border', '#e2e8f0');
+
+        return {
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: textColor
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: textColorSecondary,
+                        precision: 0
+                    },
+                    grid: {
+                        color: surfaceBorder
+                    }
+                }
+            }
+        };
+    });
+
+    const topProductsChartData = computed(() => {
+        const greenColor = getCssVar('--green-500', '#10B981');
+
+        return {
+            labels: topProducts.labels,
+            datasets: [
+                {
+                    label: 'Ventes',
+                    data: topProducts.values,
+                    backgroundColor: greenColor,
+                    borderRadius: 6,
+                    barPercentage: 0.8
+                }
+            ]
+        };
+    });
+
+    const topProductsChartOptions = computed(() => {
+        const textColor = getCssVar('--text-color', '#334155');
+        const textColorSecondary = getCssVar('--text-color-secondary', '#94a3b8');
+        const surfaceBorder = getCssVar('--surface-border', '#e2e8f0');
+
+        return {
+            indexAxis: 'y',
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: textColorSecondary,
+                        precision: 0
+                    },
+                    grid: {
+                        color: surfaceBorder,
+                        drawBorder: false
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        display: false,
+                        drawBorder: false
+                    }
+                }
+            }
+        };
+    });
+
     async function loadDashboard() {
         loading.value = true;
         error.value = null;
@@ -217,6 +407,42 @@ export function useAdminDashboard() {
                 ordersByStatus.values = [];
             }
 
+            if (data.revenue_by_category) {
+                revenueByCategory.labels = Array.isArray(data.revenue_by_category.labels)
+                    ? data.revenue_by_category.labels
+                    : [];
+                revenueByCategory.values = Array.isArray(data.revenue_by_category.values)
+                    ? data.revenue_by_category.values
+                    : [];
+            } else {
+                revenueByCategory.labels = [];
+                revenueByCategory.values = [];
+            }
+
+            if (data.customers_over_time) {
+                customersOverTime.labels = Array.isArray(data.customers_over_time.labels)
+                    ? data.customers_over_time.labels
+                    : [];
+                customersOverTime.values = Array.isArray(data.customers_over_time.values)
+                    ? data.customers_over_time.values
+                    : [];
+            } else {
+                customersOverTime.labels = [];
+                customersOverTime.values = [];
+            }
+
+            if (data.top_products) {
+                topProducts.labels = Array.isArray(data.top_products.labels)
+                    ? data.top_products.labels
+                    : [];
+                topProducts.values = Array.isArray(data.top_products.values)
+                    ? data.top_products.values
+                    : [];
+            } else {
+                topProducts.labels = [];
+                topProducts.values = [];
+            }
+
             recentOrders.value = Array.isArray(data.recent_orders) ? data.recent_orders : [];
         } catch (e) {
             console.error(e);
@@ -244,6 +470,12 @@ export function useAdminDashboard() {
         revenueChartOptions,
         ordersByStatusChartData,
         ordersByStatusChartOptions,
+        revenueByCategoryChartData,
+        revenueByCategoryChartOptions,
+        customersOverTimeChartData,
+        customersOverTimeChartOptions,
+        topProductsChartData,
+        topProductsChartOptions,
         recentOrders,
         hasData,
         loadDashboard

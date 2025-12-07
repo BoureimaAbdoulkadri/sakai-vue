@@ -42,7 +42,10 @@
                             showClear
                             @change="onFilterChange"
                         />
-                            
+                        <Button v-tooltip.top="'Exporter en Excel'" icon="pi pi-file-excel" label="Excel" outlined severity="success"
+                                @click="exportExcel"/>
+                        <Button v-tooltip.top="'Exporter en CSV'" icon="pi pi-file" label="CSV" outlined severity="secondary"
+                                @click="exportCSV"/>
                         <Button icon="pi pi-plus" label="Nouveau client" severity="primary" @click="openNew" />
                     </div>
                 </div>
@@ -185,8 +188,8 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { useCustomers } from '@/composables/admin/useCustomers';
+import {computed} from 'vue';
+import {useCustomers} from '@/composables/admin/useCustomers';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
@@ -218,7 +221,9 @@ const {
     openEdit,
     hideDialog,
     saveCustomer,
-    confirmDeleteCustomer
+    confirmDeleteCustomer,
+    exportCSV,
+    exportExcel
 } = useCustomers();
 
 const dialogTitle = computed(() => (form.id ? 'Modifier le client' : 'Nouveau client'));

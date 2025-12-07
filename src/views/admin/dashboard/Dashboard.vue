@@ -28,8 +28,8 @@
             </div>
         </div>
 
-        <!-- KPI cards -->
-        <div class="col-12 md:col-6 xl:col-3" v-for="card in 4" :key="card">
+        <!-- KPI cards - Ligne 1 -->
+        <div class="col-12 md:col-6 xl:col-3">
             <Card class="surface-card shadow-1 border-round">
                 <template #content>
                     <div v-if="loading" class="flex flex-column gap-2">
@@ -37,41 +37,213 @@
                         <Skeleton width="40%" height="1.5rem" />
                         <Skeleton width="40%" height="0.75rem" />
                     </div>
-                    <div v-else>
-                        <template v-if="card === 1">
-                            <div class="text-sm text-muted-color mb-1">CA 30 derniers jours</div>
+                    <div v-else class="flex align-items-start justify-content-between">
+                        <div>
+                            <div class="text-sm text-muted-color mb-1 flex align-items-center gap-2">
+                                <i class="pi pi-euro text-primary"></i>
+                                CA 30 derniers jours
+                            </div>
                             <div class="text-2xl font-semibold mb-1">{{ revenueFormatted }}</div>
                             <div class="text-xs" :class="trendClass(metrics.revenue_30d_trend)">
+                                <i :class="trendIcon(metrics.revenue_30d_trend)"></i>
                                 {{ trendPrefix(metrics.revenue_30d_trend) }}{{ metrics.revenue_30d_trend }} %
-                                vs période précédente
                             </div>
-                        </template>
+                        </div>
+                        <div class="bg-primary-100 border-round p-2">
+                            <i class="pi pi-chart-line text-primary text-xl"></i>
+                        </div>
+                    </div>
+                </template>
+            </Card>
+        </div>
 
-                        <template v-else-if="card === 2">
-                            <div class="text-sm text-muted-color mb-1">Commandes (30j)</div>
+        <div class="col-12 md:col-6 xl:col-3">
+            <Card class="surface-card shadow-1 border-round">
+                <template #content>
+                    <div v-if="loading" class="flex flex-column gap-2">
+                        <Skeleton height="1rem" width="60%"/>
+                        <Skeleton height="1.5rem" width="40%"/>
+                        <Skeleton height="0.75rem" width="40%"/>
+                    </div>
+                    <div v-else class="flex align-items-start justify-content-between">
+                        <div>
+                            <div class="text-sm text-muted-color mb-1 flex align-items-center gap-2">
+                                <i class="pi pi-shopping-cart text-blue-500"></i>
+                                Commandes (30j)
+                            </div>
                             <div class="text-2xl font-semibold mb-1">{{ metrics.orders_30d }}</div>
                             <div class="text-xs" :class="trendClass(metrics.orders_30d_trend)">
+                                <i :class="trendIcon(metrics.orders_30d_trend)"></i>
                                 {{ trendPrefix(metrics.orders_30d_trend) }}{{ metrics.orders_30d_trend }} %
-                                vs période précédente
                             </div>
-                        </template>
+                        </div>
+                        <div class="bg-blue-100 border-round p-2">
+                            <i class="pi pi-shopping-bag text-blue-500 text-xl"></i>
+                        </div>
+                    </div>
+                </template>
+            </Card>
+        </div>
 
-                        <template v-else-if="card === 3">
-                            <div class="text-sm text-muted-color mb-1">Panier moyen (30j)</div>
+        <div class="col-12 md:col-6 xl:col-3">
+            <Card class="surface-card shadow-1 border-round">
+                <template #content>
+                    <div v-if="loading" class="flex flex-column gap-2">
+                        <Skeleton height="1rem" width="60%"/>
+                        <Skeleton height="1.5rem" width="40%"/>
+                        <Skeleton height="0.75rem" width="40%"/>
+                    </div>
+                    <div v-else class="flex align-items-start justify-content-between">
+                        <div>
+                            <div class="text-sm text-muted-color mb-1 flex align-items-center gap-2">
+                                <i class="pi pi-money-bill text-green-500"></i>
+                                Panier moyen (30j)
+                            </div>
                             <div class="text-2xl font-semibold mb-1">{{ avgOrderFormatted }}</div>
                             <div class="text-xs text-muted-color">
-                                Basé sur les commandes des 30 derniers jours
+                                {{ metrics.orders_30d }} commandes
                             </div>
-                        </template>
+                        </div>
+                        <div class="bg-green-100 border-round p-2">
+                            <i class="pi pi-wallet text-green-500 text-xl"></i>
+                        </div>
+                    </div>
+                </template>
+            </Card>
+        </div>
 
-                        <template v-else>
-                            <div class="text-sm text-muted-color mb-1">Nouveaux clients (30j)</div>
+        <div class="col-12 md:col-6 xl:col-3">
+            <Card class="surface-card shadow-1 border-round">
+                <template #content>
+                    <div v-if="loading" class="flex flex-column gap-2">
+                        <Skeleton height="1rem" width="60%"/>
+                        <Skeleton height="1.5rem" width="40%"/>
+                        <Skeleton height="0.75rem" width="40%"/>
+                    </div>
+                    <div v-else class="flex align-items-start justify-content-between">
+                        <div>
+                            <div class="text-sm text-muted-color mb-1 flex align-items-center gap-2">
+                                <i class="pi pi-users text-orange-500"></i>
+                                Nouveaux clients (30j)
+                            </div>
                             <div class="text-2xl font-semibold mb-1">{{ metrics.new_customers_30d }}</div>
                             <div class="text-xs" :class="trendClass(metrics.new_customers_30d_trend)">
+                                <i :class="trendIcon(metrics.new_customers_30d_trend)"></i>
                                 {{ trendPrefix(metrics.new_customers_30d_trend) }}{{ metrics.new_customers_30d_trend }} %
-                                vs période précédente
                             </div>
-                        </template>
+                        </div>
+                        <div class="bg-orange-100 border-round p-2">
+                            <i class="pi pi-user-plus text-orange-500 text-xl"></i>
+                        </div>
+                    </div>
+                </template>
+            </Card>
+        </div>
+
+        <!-- KPI cards - Ligne 2 : Nouveaux indicateurs -->
+        <div class="col-12 md:col-6 xl:col-3">
+            <Card class="surface-card shadow-1 border-round">
+                <template #content>
+                    <div v-if="loading" class="flex flex-column gap-2">
+                        <Skeleton height="1rem" width="60%"/>
+                        <Skeleton height="1.5rem" width="40%"/>
+                        <Skeleton height="0.75rem" width="40%"/>
+                    </div>
+                    <div v-else class="flex align-items-start justify-content-between">
+                        <div>
+                            <div class="text-sm text-muted-color mb-1 flex align-items-center gap-2">
+                                <i class="pi pi-percentage text-purple-500"></i>
+                                Taux de conversion
+                            </div>
+                            <div class="text-2xl font-semibold mb-1">{{ metrics.conversion_rate || 'N/A' }}%</div>
+                            <div class="text-xs text-muted-color">
+                                Visiteurs → Clients
+                            </div>
+                        </div>
+                        <div class="bg-purple-100 border-round p-2">
+                            <i class="pi pi-chart-bar text-purple-500 text-xl"></i>
+                        </div>
+                    </div>
+                </template>
+            </Card>
+        </div>
+
+        <div class="col-12 md:col-6 xl:col-3">
+            <Card class="surface-card shadow-1 border-round">
+                <template #content>
+                    <div v-if="loading" class="flex flex-column gap-2">
+                        <Skeleton height="1rem" width="60%"/>
+                        <Skeleton height="1.5rem" width="40%"/>
+                        <Skeleton height="0.75rem" width="40%"/>
+                    </div>
+                    <div v-else class="flex align-items-start justify-content-between">
+                        <div>
+                            <div class="text-sm text-muted-color mb-1 flex align-items-center gap-2">
+                                <i class="pi pi-exclamation-triangle text-yellow-600"></i>
+                                Commandes en attente
+                            </div>
+                            <div class="text-2xl font-semibold mb-1">{{ metrics.pending_orders || 0 }}</div>
+                            <div class="text-xs text-muted-color">
+                                À traiter
+                            </div>
+                        </div>
+                        <div class="bg-yellow-100 border-round p-2">
+                            <i class="pi pi-clock text-yellow-600 text-xl"></i>
+                        </div>
+                    </div>
+                </template>
+            </Card>
+        </div>
+
+        <div class="col-12 md:col-6 xl:col-3">
+            <Card class="surface-card shadow-1 border-round">
+                <template #content>
+                    <div v-if="loading" class="flex flex-column gap-2">
+                        <Skeleton height="1rem" width="60%"/>
+                        <Skeleton height="1.5rem" width="40%"/>
+                        <Skeleton height="0.75rem" width="40%"/>
+                    </div>
+                    <div v-else class="flex align-items-start justify-content-between">
+                        <div>
+                            <div class="text-sm text-muted-color mb-1 flex align-items-center gap-2">
+                                <i class="pi pi-box text-red-500"></i>
+                                Stock faible
+                            </div>
+                            <div class="text-2xl font-semibold mb-1">{{ metrics.low_stock_products || 0 }}</div>
+                            <div class="text-xs text-muted-color">
+                                Produits < 10 unités
+                            </div>
+                        </div>
+                        <div class="bg-red-100 border-round p-2">
+                            <i class="pi pi-exclamation-circle text-red-500 text-xl"></i>
+                        </div>
+                    </div>
+                </template>
+            </Card>
+        </div>
+
+        <div class="col-12 md:col-6 xl:col-3">
+            <Card class="surface-card shadow-1 border-round">
+                <template #content>
+                    <div v-if="loading" class="flex flex-column gap-2">
+                        <Skeleton height="1rem" width="60%"/>
+                        <Skeleton height="1.5rem" width="40%"/>
+                        <Skeleton height="0.75rem" width="40%"/>
+                    </div>
+                    <div v-else class="flex align-items-start justify-content-between">
+                        <div>
+                            <div class="text-sm text-muted-color mb-1 flex align-items-center gap-2">
+                                <i class="pi pi-star text-cyan-500"></i>
+                                Taux de fidélité
+                            </div>
+                            <div class="text-2xl font-semibold mb-1">{{ metrics.retention_rate || 'N/A' }}%</div>
+                            <div class="text-xs text-muted-color">
+                                Clients récurrents
+                            </div>
+                        </div>
+                        <div class="bg-cyan-100 border-round p-2">
+                            <i class="pi pi-heart text-cyan-500 text-xl"></i>
+                        </div>
                     </div>
                 </template>
             </Card>
@@ -109,6 +281,65 @@
                     </div>
                     <div v-else style="height: 260px">
                         <Chart type="bar" :data="ordersByStatusChartData" :options="ordersByStatusChartOptions" />
+                    </div>
+                </template>
+            </Card>
+        </div>
+
+        <!-- Deuxième ligne de graphiques -->
+        <div class="col-12 lg:col-4">
+            <Card class="surface-card shadow-1 border-round mb-4">
+                <template #title>CA par catégorie</template>
+                <template #content>
+                    <div v-if="loading" class="flex flex-column gap-2" style="height: 300px">
+                        <Skeleton height="2rem" width="100%"/>
+                        <Skeleton height="8rem" width="100%"/>
+                    </div>
+                    <div v-else-if="!hasData" class="flex align-items-center justify-content-center"
+                         style="height: 300px">
+                        <span class="text-muted-color text-sm">Aucune donnée disponible pour le moment.</span>
+                    </div>
+                    <div v-else style="height: 300px">
+                        <Chart :data="revenueByCategoryChartData" :options="revenueByCategoryChartOptions"
+                               type="doughnut"/>
+                    </div>
+                </template>
+            </Card>
+        </div>
+
+        <div class="col-12 lg:col-4">
+            <Card class="surface-card shadow-1 border-round mb-4">
+                <template #title>Top 5 produits</template>
+                <template #content>
+                    <div v-if="loading" class="flex flex-column gap-2" style="height: 300px">
+                        <Skeleton height="2rem" width="100%"/>
+                        <Skeleton height="8rem" width="100%"/>
+                    </div>
+                    <div v-else-if="!hasData" class="flex align-items-center justify-content-center"
+                         style="height: 300px">
+                        <span class="text-muted-color text-sm">Aucune donnée disponible pour le moment.</span>
+                    </div>
+                    <div v-else style="height: 300px">
+                        <Chart :data="topProductsChartData" :options="topProductsChartOptions" type="bar"/>
+                    </div>
+                </template>
+            </Card>
+        </div>
+
+        <div class="col-12 lg:col-4">
+            <Card class="surface-card shadow-1 border-round mb-4">
+                <template #title>Évolution des clients (30j)</template>
+                <template #content>
+                    <div v-if="loading" class="flex flex-column gap-2" style="height: 300px">
+                        <Skeleton height="2rem" width="100%"/>
+                        <Skeleton height="8rem" width="100%"/>
+                    </div>
+                    <div v-else-if="!hasData" class="flex align-items-center justify-content-center"
+                         style="height: 300px">
+                        <span class="text-muted-color text-sm">Aucune donnée disponible pour le moment.</span>
+                    </div>
+                    <div v-else style="height: 300px">
+                        <Chart :data="customersOverTimeChartData" :options="customersOverTimeChartOptions" type="line"/>
                     </div>
                 </template>
             </Card>
@@ -156,8 +387,8 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { useAdminDashboard } from '@/composables/admin/useAdminDashboard';
+import {computed} from 'vue';
+import {useAdminDashboard} from '@/composables/admin/useAdminDashboard';
 
 import Card from 'primevue/card';
 import Chart from 'primevue/chart';
@@ -175,6 +406,12 @@ const {
     revenueChartOptions,
     ordersByStatusChartData,
     ordersByStatusChartOptions,
+    revenueByCategoryChartData,
+    revenueByCategoryChartOptions,
+    customersOverTimeChartData,
+    customersOverTimeChartOptions,
+    topProductsChartData,
+    topProductsChartOptions,
     recentOrders,
     hasData,
     loadDashboard
@@ -231,6 +468,12 @@ function trendClass(trend) {
 function trendPrefix(trend) {
     if (trend > 0) return '+';
     return '';
+}
+
+function trendIcon(trend) {
+    if (trend > 0) return 'pi pi-arrow-up';
+    if (trend < 0) return 'pi pi-arrow-down';
+    return 'pi pi-minus';
 }
 </script>
 

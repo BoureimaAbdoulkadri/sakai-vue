@@ -1,15 +1,18 @@
-import { ref, reactive, computed, onMounted, watch, onBeforeUnmount } from 'vue';
-import { useToast } from 'primevue/usetoast';
-import { useConfirm } from 'primevue/useconfirm';
-import { fetchProducts, createProduct, updateProduct, deleteProduct } from '@/services/admin/productsService';
-import { fetchCategories } from '@/services/admin/categoriesService';
+import {computed, onBeforeUnmount, onMounted, reactive, ref, watch} from 'vue';
+import {useToast} from 'primevue/usetoast';
+import {useConfirm} from 'primevue/useconfirm';
+import {createProduct, deleteProduct, fetchProducts, updateProduct} from '@/services/admin/productsService';
+import {fetchCategories} from '@/services/admin/categoriesService';
+import {useExport} from '@/composables/useExport';
 
 export function useProducts() {
     const toast = useToast();
     const confirm = useConfirm();
+    const {downloadCSV, downloadExcel, formatPrice, formatDateShort} = useExport();
 
     const products = ref([]);
     const loading = ref(false);
+    const selectedProducts = ref([]);
 
     const pagination = reactive({
         page: 1,
@@ -231,6 +234,156 @@ export function useProducts() {
         loadProducts();
     }
 
+    function exportCSV() {
+        const exportColumns = [
+            {field: 'id', header: 'ID'},
+            {field: 'name', header: 'Nom'},
+            {field: 'slug', header: 'Slug'},
+            {field: 'sku', header: 'SKU'},
+            {field: 'category.name', header: 'Catégorie'},
+            {
+                field: 'base_price',
+                header: 'Prix',
+                exportFormatter: (value) => formatPrice(value)
+            },
+            {field: 'stock', header: 'Stock'},
+            {field: 'status', header: 'Statut'},
+            {
+                field: 'created_at',
+                header: 'Créé le',
+                exportFormatter: (value) => formatDateShort(value)
+            }
+        ];
+
+        const dataToExport = selectedProducts.value.length > 0 ? selectedProducts.value : products.value;
+        const filename = `produits_${new Date().toISOString().split('T')[0]}.csv`;
+        downloadCSV(dataToExport, exportColumns, filename);
+    }
+
+    function exportExcel() {
+        const exportColumns = [
+            {field: 'id', header: 'ID'},
+            {field: 'name', header: 'Nom'},
+            {field: 'slug', header: 'Slug'},
+            {field: 'sku', header: 'SKU'},
+            {field: 'category.name', header: 'Catégorie'},
+            {
+                field: 'base_price',
+                header: 'Prix',
+                exportFormatter: (value) => formatPrice(value)
+            },
+            {field: 'stock', header: 'Stock'},
+            {field: 'status', header: 'Statut'},
+            {
+                field: 'created_at',
+                header: 'Créé le',
+                exportFormatter: (value) => formatDateShort(value)
+            }
+        ];
+
+        const dataToExport = selectedProducts.value.length > 0 ? selectedProducts.value : products.value;
+        const filename = `produits_${new Date().toISOString().split('T')[0]}.xlsx`;
+        downloadExcel(dataToExport, exportColumns, filename);
+    }
+
+    function bulkDelete() {
+        if (selectedProducts.value.length === 0) {
+            toast.add({
+                severity: 'warn',
+                summary: 'Attention',
+                detail: 'Aucun produit sélectionné',
+                life: 3000
+            });
+            return;
+        }
+
+        confirm.require({
+            message: `Supprimer ${selectedProducts.value.length} produit(s) sélectionné(s) ?`,
+            header: 'Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Oui',
+            rejectLabel: 'Non',
+            accept: async () => {
+                await performBulkDelete();
+            }
+        });
+    }
+
+    async function performBulkDelete() {
+        try {
+            const deletePromises = selectedProducts.value.map((product) => deleteProduct(product.id));
+            await Promise.all(deletePromises);
+
+            toast.add({
+                severity: 'success',
+                summary: 'Succès',
+                detail: `${selectedProducts.value.length} produit(s) supprimé(s)`,
+                life: 3000
+            });
+
+            selectedProducts.value = [];
+            await loadProducts();
+        } catch (error) {
+            console.error(error);
+            toast.add({
+                severity: 'error',
+                summary: 'Erreur',
+                detail: 'Erreur lors de la suppression',
+                life: 3000
+            });
+        }
+    }
+
+    function bulkUpdateStatus(newStatus) {
+        if (selectedProducts.value.length === 0) {
+            toast.add({
+                severity: 'warn',
+                summary: 'Attention',
+                detail: 'Aucun produit sélectionné',
+                life: 3000
+            });
+            return;
+        }
+
+        confirm.require({
+            message: `Changer le statut de ${selectedProducts.value.length} produit(s) en "${newStatus}" ?`,
+            header: 'Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Oui',
+            rejectLabel: 'Non',
+            accept: async () => {
+                await performBulkUpdateStatus(newStatus);
+            }
+        });
+    }
+
+    async function performBulkUpdateStatus(newStatus) {
+        try {
+            const updatePromises = selectedProducts.value.map((product) =>
+                updateProduct(product.id, {...product, status: newStatus})
+            );
+            await Promise.all(updatePromises);
+
+            toast.add({
+                severity: 'success',
+                summary: 'Succès',
+                detail: `${selectedProducts.value.length} produit(s) mis à jour`,
+                life: 3000
+            });
+
+            selectedProducts.value = [];
+            await loadProducts();
+        } catch (error) {
+            console.error(error);
+            toast.add({
+                severity: 'error',
+                summary: 'Erreur',
+                detail: 'Erreur lors de la mise à jour',
+                life: 3000
+            });
+        }
+    }
+
     async function init() {
         await loadCategories();
         await loadProducts();
@@ -270,6 +423,7 @@ export function useProducts() {
         form,
         statusOptions,
         categoryOptions,
+        selectedProducts,
         openNew,
         openEdit,
         hideDialog,
@@ -279,6 +433,10 @@ export function useProducts() {
         onPage,
         onSearch,
         onFilterChange,
+        exportCSV,
+        exportExcel,
+        bulkDelete,
+        bulkUpdateStatus,
         init
     };
 }
