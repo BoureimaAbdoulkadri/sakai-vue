@@ -10,6 +10,7 @@ import Dialog from 'primevue/dialog';
 import InputNumber from 'primevue/inputnumber';
 import Textarea from 'primevue/textarea';
 import Tag from 'primevue/tag';
+import Divider from 'primevue/divider';
 import ConfirmDialog from 'primevue/confirmdialog';
 
 const {
@@ -171,58 +172,206 @@ function statusSeverity(status) {
         </div>
     </div>
 
-    <Dialog v-model:visible="productDialog" :header="dialogTitle" modal class="w-11 md:w-6">
-        <div class="grid formgrid p-fluid">
-            <div class="col-12 md:col-6">
-                <label for="name" class="font-semibold">Nom</label>
-                <InputText id="name" v-model="form.name" required />
+  <Dialog v-model:visible="productDialog" :header="dialogTitle" class="w-11 md:w-9" modal>
+    <div class="formgrid grid p-fluid">
+      <!-- Section Informations de base -->
+      <div class="col-12">
+        <Divider align="left">
+          <div class="flex align-items-center gap-2">
+            <i class="pi pi-info-circle text-primary"></i>
+            <span class="font-semibold text-lg">Informations de base</span>
+          </div>
+        </Divider>
             </div>
+
             <div class="col-12 md:col-6">
-                <label for="slug" class="font-semibold">Slug</label>
-                <InputText id="slug" v-model="form.slug" />
+              <label class="font-semibold block mb-2" for="name">
+                Nom du produit <span class="text-red-500">*</span>
+              </label>
+              <InputText
+                  id="name"
+                  v-model="form.name"
+                  class="w-full"
+                  placeholder="Ex: T-shirt Premium"
+              />
             </div>
+
             <div class="col-12 md:col-6">
-                <label for="sku" class="font-semibold">SKU</label>
-                <InputText id="sku" v-model="form.sku" />
+              <label class="font-semibold block mb-2" for="slug">
+                Slug <span class="text-red-500">*</span>
+              </label>
+              <InputText
+                  id="slug"
+                  v-model="form.slug"
+                  class="w-full"
+                  placeholder="t-shirt-premium"
+              />
+              <small class="text-muted-color">URL du produit (sans espaces)</small>
             </div>
-            <div class="col-12">
-                <label for="description" class="font-semibold">Description</label>
-                <Textarea id="description" v-model="form.description" rows="3" auto-resize />
-            </div>
+
             <div class="col-12 md:col-6">
-                <label for="price" class="font-semibold">Prix</label>
-                <InputNumber id="price" v-model="form.base_price" mode="currency" currency="EUR" locale="fr-FR" />
-            </div>
-            <div class="col-12 md:col-6">
-                <label for="stock" class="font-semibold">Stock</label>
-                <InputNumber id="stock" v-model="form.stock" :min="0" />
-            </div>
-            <div class="col-12 md:col-6">
-                <label for="status" class="font-semibold">Statut</label>
-                <Select
-                    id="status"
-                    v-model="form.status"
-                    :options="dialogStatusOptions"
-                    optionLabel="label"
-                    optionValue="value"
+              <label class="font-semibold block mb-2" for="sku">
+                SKU (Référence)
+              </label>
+              <InputText
+                  id="sku"
+                  v-model="form.sku"
+                  class="w-full"
+                  placeholder="TSH-001"
                 />
             </div>
+
             <div class="col-12 md:col-6">
-                <label for="category" class="font-semibold">Catégorie</label>
+              <label class="font-semibold block mb-2" for="category">
+                Catégorie
+              </label>
                 <Select
                     id="category"
                     v-model="form.category_id"
                     :options="categoryOptions"
                     optionLabel="label"
                     optionValue="value"
-                    placeholder="Sélectionner"
+                    class="w-full"
                     showClear
+                    placeholder="Sélectionner une catégorie"
+                />
+            </div>
+
+      <!-- Section Description -->
+      <div class="col-12 mt-3">
+        <Divider align="left">
+          <div class="flex align-items-center gap-2">
+            <i class="pi pi-align-left text-primary"></i>
+            <span class="font-semibold text-lg">Description</span>
+          </div>
+        </Divider>
+      </div>
+
+      <div class="col-12">
+        <label class="font-semibold block mb-2" for="short_description">
+          Description courte
+        </label>
+        <Textarea
+            id="short_description"
+            v-model="form.short_description"
+            auto-resize
+            class="w-full"
+            placeholder="Résumé du produit en 1-2 phrases"
+            rows="2"
+        />
+        <small class="text-muted-color">Apparaît dans les listes de produits</small>
+      </div>
+
+      <div class="col-12">
+        <label class="font-semibold block mb-2" for="description">
+          Description complète
+        </label>
+        <Textarea
+            id="description"
+            v-model="form.description"
+            auto-resize
+            class="w-full"
+            placeholder="Description détaillée : caractéristiques, matériaux, utilisation..."
+            rows="5"
+        />
+      </div>
+
+      <!-- Section Média -->
+      <div class="col-12 mt-3">
+        <Divider align="left">
+          <div class="flex align-items-center gap-2">
+            <i class="pi pi-image text-primary"></i>
+            <span class="font-semibold text-lg">Image</span>
+          </div>
+        </Divider>
+      </div>
+
+      <div class="col-12">
+        <label class="font-semibold block mb-2" for="main_image_url">
+          URL de l'image principale
+        </label>
+        <InputText
+            id="main_image_url"
+            v-model="form.main_image_url"
+            class="w-full"
+            placeholder="https://example.com/images/produit.jpg"
+        />
+        <small class="text-muted-color">Lien vers l'image du produit</small>
+      </div>
+
+      <!-- Section Prix et Stock -->
+      <div class="col-12 mt-3">
+        <Divider align="left">
+          <div class="flex align-items-center gap-2">
+            <i class="pi pi-money-bill text-primary"></i>
+            <span class="font-semibold text-lg">Prix et Inventaire</span>
+          </div>
+        </Divider>
+      </div>
+
+      <div class="col-12 md:col-4">
+        <label class="font-semibold block mb-2" for="price">
+          Prix <span class="text-red-500">*</span>
+        </label>
+        <InputNumber
+            id="price"
+            v-model="form.base_price"
+            class="w-full"
+            currency="EUR"
+            locale="fr-FR"
+            mode="currency"
+        />
+      </div>
+
+      <div class="col-12 md:col-4">
+        <label class="font-semibold block mb-2" for="stock">
+          Stock <span class="text-red-500">*</span>
+        </label>
+        <InputNumber
+            id="stock"
+            v-model="form.stock"
+            :min="0"
+            class="w-full"
+            placeholder="0"
+        />
+      </div>
+
+      <div class="col-12 md:col-4">
+        <label class="font-semibold block mb-2" for="status">
+          Statut <span class="text-red-500">*</span>
+        </label>
+        <Select
+            id="status"
+            v-model="form.status"
+            :options="dialogStatusOptions"
+            class="w-full"
+            optionLabel="label"
+            optionValue="value"
                 />
             </div>
         </div>
-        <template #footer>
-            <Button label="Annuler" icon="pi pi-times" text @click="hideDialog" />
-            <Button label="Enregistrer" icon="pi pi-check" @click="saveProduct" />
+
+    <template #footer>
+      <div class="flex justify-content-between align-items-center w-full">
+        <small class="text-muted-color">
+          <i class="pi pi-info-circle mr-1"></i>
+          Les champs marqués d'un <span class="text-red-500">*</span> sont obligatoires
+        </small>
+        <div class="flex gap-2">
+          <Button
+              icon="pi pi-times"
+              label="Annuler"
+              severity="secondary"
+              text
+              @click="hideDialog"
+          />
+          <Button
+              icon="pi pi-check"
+              label="Enregistrer"
+              @click="saveProduct"
+          />
+        </div>
+      </div>
         </template>
     </Dialog>
 
@@ -230,6 +379,7 @@ function statusSeverity(status) {
 </template>
 
 <style scoped>
+/* Style des filtres de recherche */
 .card .p-input-icon-left > .p-inputtext,
 .card .p-dropdown,
 .card .p-button {
@@ -241,5 +391,111 @@ function statusSeverity(status) {
     .card .p-dropdown {
         width: 14rem;
     }
+}
+
+/* Style Sakai professionnel pour le formulaire */
+:deep(.p-dialog) {
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+:deep(.p-dialog-header) {
+  border-bottom: 1px solid var(--surface-border);
+  padding: 1.5rem;
+}
+
+:deep(.p-dialog-content) {
+  padding: 1.5rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+:deep(.p-dialog-footer) {
+  border-top: 1px solid var(--surface-border);
+  padding: 1.25rem 1.5rem;
+}
+
+/* Style des dividers */
+:deep(.p-divider) {
+  margin: 0.5rem 0;
+}
+
+:deep(.p-divider .p-divider-content) {
+  background-color: transparent;
+}
+
+:deep(.p-divider-horizontal.p-divider-left::before) {
+  flex-grow: 0;
+  width: 0;
+}
+
+/* Style des inputs dans le formulaire */
+:deep(.formgrid .p-inputtext),
+:deep(.formgrid .p-inputnumber-input),
+:deep(.formgrid .p-textarea),
+:deep(.formgrid .p-select) {
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
+:deep(.formgrid .p-inputtext:focus),
+:deep(.formgrid .p-inputnumber-input:focus),
+:deep(.formgrid .p-textarea:focus),
+:deep(.formgrid .p-select:focus) {
+  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+  border-color: #3b82f6;
+}
+
+:deep(.formgrid .p-inputtext::placeholder),
+:deep(.formgrid .p-textarea::placeholder) {
+  color: var(--text-color-secondary);
+  opacity: 0.7;
+}
+
+/* Style des labels et hints */
+.formgrid label {
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.formgrid small.text-muted-color {
+  display: block;
+  margin-top: 0.375rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+/* Icônes de section */
+.text-primary {
+  color: #3b82f6 !important;
+}
+
+/* Animation d'entrée du dialog */
+:deep(.p-dialog-enter-active) {
+  transition: all 0.3s ease;
+}
+
+:deep(.p-dialog-enter-from) {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+/* Scrollbar personnalisée pour le dialog */
+:deep(.p-dialog-content::-webkit-scrollbar) {
+  width: 8px;
+}
+
+:deep(.p-dialog-content::-webkit-scrollbar-track) {
+  background: var(--surface-100);
+  border-radius: 4px;
+}
+
+:deep(.p-dialog-content::-webkit-scrollbar-thumb) {
+  background: var(--surface-400);
+  border-radius: 4px;
+}
+
+:deep(.p-dialog-content::-webkit-scrollbar-thumb:hover) {
+  background: var(--surface-500);
 }
 </style>

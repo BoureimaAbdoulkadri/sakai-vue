@@ -44,6 +44,14 @@ export function useOrders() {
         { label: 'Remboursée', value: 'refunded' }
     ];
 
+    const paymentMethodOptions = [
+        {label: 'Carte bancaire', value: 'card'},
+        {label: 'PayPal', value: 'paypal'},
+        {label: 'Virement bancaire', value: 'bank_transfer'},
+        {label: 'Espèces', value: 'cash'},
+        {label: 'Chèque', value: 'check'}
+    ];
+
     const dialogStatusOptions = computed(() => statusOptions.filter((opt) => opt.value !== null));
     const dialogPaymentStatusOptions = computed(() => paymentStatusOptions.filter((opt) => opt.value !== null));
 
@@ -148,7 +156,9 @@ export function useOrders() {
 
         const payload = {
             status: selectedOrder.value.status,
-            payment_status: selectedOrder.value.payment_status
+            payment_status: selectedOrder.value.payment_status,
+            payment_method: selectedOrder.value.payment_method,
+            notes: selectedOrder.value.notes
         };
 
         try {
@@ -264,6 +274,7 @@ export function useOrders() {
         selectedOrder,
         statusOptions,
         paymentStatusOptions,
+        paymentMethodOptions,
         dialogStatusOptions,
         dialogPaymentStatusOptions,
         statusSeverity,

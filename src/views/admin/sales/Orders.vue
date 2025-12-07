@@ -120,6 +120,29 @@
                         class="w-full"
                     />
                 </div>
+                <div class="mt-3">
+                    <label class="font-semibold block mb-1">Méthode de paiement</label>
+                    <Select
+                        v-model="selectedOrder.payment_method"
+                        :options="paymentMethodOptions"
+                        class="w-full"
+                        optionLabel="label"
+                        optionValue="value"
+                        placeholder="Sélectionner"
+                        showClear
+                    />
+                </div>
+            </div>
+
+            <div class="col-12">
+                <label class="font-semibold block mb-2">Notes internes</label>
+                <Textarea
+                    v-model="selectedOrder.notes"
+                    auto-resize
+                    class="w-full"
+                    placeholder="Ajoutez des notes sur cette commande..."
+                    rows="3"
+                />
             </div>
 
             <div class="col-12 md:col-6">
@@ -184,6 +207,7 @@ import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import Tag from 'primevue/tag';
+import Textarea from 'primevue/textarea';
 import ConfirmDialog from 'primevue/confirmdialog';
 
 const {
@@ -199,6 +223,7 @@ const {
     selectedOrder,
     statusOptions,
     paymentStatusOptions,
+    paymentMethodOptions,
     dialogStatusOptions,
     dialogPaymentStatusOptions,
     statusSeverity,

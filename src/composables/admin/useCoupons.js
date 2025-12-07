@@ -1,13 +1,7 @@
-import { ref, reactive, computed, onMounted } from 'vue';
-import { useToast } from 'primevue/usetoast';
-import { useConfirm } from 'primevue/useconfirm';
-import {
-    fetchCouponsPaginated,
-    fetchCouponDetail,
-    createCoupon,
-    updateCoupon,
-    deleteCoupon
-} from '@/services/admin/couponsService';
+import {computed, onMounted, reactive, ref} from 'vue';
+import {useToast} from 'primevue/usetoast';
+import {useConfirm} from 'primevue/useconfirm';
+import {createCoupon, deleteCoupon, fetchCouponsPaginated, updateCoupon} from '@/services/admin/couponsService';
 
 export function useCoupons() {
     const toast = useToast();
@@ -37,8 +31,9 @@ export function useCoupons() {
         status: 'draft',
         scope: 'order',
         usage_limit: null,
+        usage_per_customer: null,
         usage_count: 0,
-        min_amount: null,
+        min_order_amount: null,
         starts_at: null,
         ends_at: null
     });
@@ -75,8 +70,9 @@ export function useCoupons() {
         form.status = 'draft';
         form.scope = 'order';
         form.usage_limit = null;
+        form.usage_per_customer = null;
         form.usage_count = 0;
-        form.min_amount = null;
+        form.min_order_amount = null;
         form.starts_at = null;
         form.ends_at = null;
     }
@@ -143,8 +139,9 @@ export function useCoupons() {
         form.status = coupon.status ?? 'draft';
         form.scope = coupon.scope ?? 'order';
         form.usage_limit = coupon.usage_limit ?? null;
+        form.usage_per_customer = coupon.usage_per_customer ?? null;
         form.usage_count = coupon.usage_count ?? 0;
-        form.min_amount = coupon.min_amount ?? null;
+        form.min_order_amount = coupon.min_order_amount ?? null;
         form.starts_at = coupon.starts_at ? new Date(coupon.starts_at) : null;
         form.ends_at = coupon.ends_at ? new Date(coupon.ends_at) : null;
 
@@ -173,7 +170,8 @@ export function useCoupons() {
             status: form.status,
             scope: form.scope,
             usage_limit: form.usage_limit,
-            min_amount: form.min_amount,
+            usage_per_customer: form.usage_per_customer,
+            min_order_amount: form.min_order_amount,
             starts_at: toIsoStringOrNull(form.starts_at),
             ends_at: toIsoStringOrNull(form.ends_at)
         };

@@ -41,11 +41,7 @@ export function useCustomers() {
         phone: '',
         company_name: '',
         type: 'individual',
-        status: 'active',
-        country: '',
-        city: '',
-        address_line1: '',
-        postal_code: ''
+        status: 'active'
     });
 
     const typeOptions = [
@@ -81,10 +77,6 @@ export function useCustomers() {
         form.company_name = '';
         form.type = 'individual';
         form.status = 'active';
-        form.country = '';
-        form.city = '';
-        form.address_line1 = '';
-        form.postal_code = '';
     }
 
     async function loadCustomers() {
@@ -151,10 +143,6 @@ export function useCustomers() {
         form.company_name = customer.company_name ?? '';
         form.type = customer.type ?? 'individual';
         form.status = customer.status ?? 'active';
-        form.country = customer.country ?? '';
-        form.city = customer.city ?? '';
-        form.address_line1 = customer.address_line1 ?? '';
-        form.postal_code = customer.postal_code ?? '';
 
         editingCustomer.value = customer;
         customerDialog.value = true;
@@ -190,12 +178,7 @@ export function useCustomers() {
             email: form.email,
             phone: form.phone,
             company_name: form.company_name,
-            type: form.type,
-            status: form.status,
-            country: form.country,
-            city: form.city,
-            address_line1: form.address_line1,
-            postal_code: form.postal_code
+            status: form.status
         };
 
         try {

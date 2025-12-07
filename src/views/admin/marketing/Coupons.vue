@@ -157,12 +157,18 @@
                 />
             </div>
             <div class="col-12 md:col-6">
-                <label for="usage_limit" class="font-semibold">Limite d'utilisation</label>
+                <label class="font-semibold" for="usage_limit">Limite d'utilisation globale</label>
                 <InputNumber id="usage_limit" v-model="form.usage_limit" :min="0" placeholder="Illimité si vide" />
             </div>
             <div class="col-12 md:col-6">
-                <label for="min_amount" class="font-semibold">Montant min. commande</label>
-                <InputNumber id="min_amount" v-model="form.min_amount" :min="0" mode="currency" currency="EUR" locale="fr-FR" />
+                <label class="font-semibold" for="usage_per_customer">Limite par client</label>
+                <InputNumber id="usage_per_customer" v-model="form.usage_per_customer" :min="0"
+                             placeholder="Illimité si vide"/>
+            </div>
+            <div class="col-12 md:col-6">
+                <label class="font-semibold" for="min_order_amount">Montant min. commande</label>
+                <InputNumber id="min_order_amount" v-model="form.min_order_amount" :min="0" currency="EUR"
+                             locale="fr-FR" mode="currency"/>
             </div>
             <div class="col-12 md:col-6">
                 <label class="font-semibold">Période de validité</label>
@@ -182,8 +188,8 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { useCoupons } from '@/composables/admin/useCoupons';
+import {computed} from 'vue';
+import {useCoupons} from '@/composables/admin/useCoupons';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';

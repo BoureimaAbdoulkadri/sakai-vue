@@ -4,15 +4,15 @@
         <div class="col-12">
             <div class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4 gap-3">
                 <div>
-                    <h2 class="text-2xl font-semibold mb-1">Tableau de bord</h2>
+                    <h2 class="text-2xl font-semibold mb-1">{{ $t('admin.dashboard.title') }}</h2>
                     <span class="text-sm text-muted-color">
-                        Vue d'ensemble de l'activité de la boutique
+                        {{ $t('admin.dashboard.subtitle') }}
                     </span>
                 </div>
                 <div class="flex gap-2">
                     <Button
                         icon="pi pi-refresh"
-                        label="Rafraîchir"
+                        :label="$t('admin.common.actions.refresh')"
                         outlined
                         @click="loadDashboard"
                         :loading="loading"
@@ -41,7 +41,7 @@
                         <div>
                             <div class="text-sm text-muted-color mb-1 flex align-items-center gap-2">
                                 <i class="pi pi-euro text-primary"></i>
-                                CA 30 derniers jours
+                                {{ $t('admin.dashboard.metrics.revenue.title') }}
                             </div>
                             <div class="text-2xl font-semibold mb-1">{{ revenueFormatted }}</div>
                             <div class="text-xs" :class="trendClass(metrics.revenue_30d_trend)">
@@ -69,7 +69,7 @@
                         <div>
                             <div class="text-sm text-muted-color mb-1 flex align-items-center gap-2">
                                 <i class="pi pi-shopping-cart text-blue-500"></i>
-                                Commandes (30j)
+                                {{ $t('admin.dashboard.metrics.orders.title') }}
                             </div>
                             <div class="text-2xl font-semibold mb-1">{{ metrics.orders_30d }}</div>
                             <div class="text-xs" :class="trendClass(metrics.orders_30d_trend)">
@@ -97,11 +97,11 @@
                         <div>
                             <div class="text-sm text-muted-color mb-1 flex align-items-center gap-2">
                                 <i class="pi pi-money-bill text-green-500"></i>
-                                Panier moyen (30j)
+                                {{ $t('admin.dashboard.metrics.avg_order.title') }}
                             </div>
                             <div class="text-2xl font-semibold mb-1">{{ avgOrderFormatted }}</div>
                             <div class="text-xs text-muted-color">
-                                {{ metrics.orders_30d }} commandes
+                                {{ metrics.orders_30d }} {{ $t('admin.dashboard.metrics.orders.title').toLowerCase() }}
                             </div>
                         </div>
                         <div class="bg-green-100 border-round p-2">
@@ -124,7 +124,7 @@
                         <div>
                             <div class="text-sm text-muted-color mb-1 flex align-items-center gap-2">
                                 <i class="pi pi-users text-orange-500"></i>
-                                Nouveaux clients (30j)
+                                {{ $t('admin.dashboard.metrics.customers.title') }}
                             </div>
                             <div class="text-2xl font-semibold mb-1">{{ metrics.new_customers_30d }}</div>
                             <div class="text-xs" :class="trendClass(metrics.new_customers_30d_trend)">
@@ -153,7 +153,7 @@
                         <div>
                             <div class="text-sm text-muted-color mb-1 flex align-items-center gap-2">
                                 <i class="pi pi-percentage text-purple-500"></i>
-                                Taux de conversion
+                                {{ $t('admin.dashboard.metrics.conversion_rate.title') }}
                             </div>
                             <div class="text-2xl font-semibold mb-1">{{ metrics.conversion_rate || 'N/A' }}%</div>
                             <div class="text-xs text-muted-color">
@@ -180,7 +180,7 @@
                         <div>
                             <div class="text-sm text-muted-color mb-1 flex align-items-center gap-2">
                                 <i class="pi pi-exclamation-triangle text-yellow-600"></i>
-                                Commandes en attente
+                                {{ $t('admin.dashboard.metrics.pending_orders.title') }}
                             </div>
                             <div class="text-2xl font-semibold mb-1">{{ metrics.pending_orders || 0 }}</div>
                             <div class="text-xs text-muted-color">
@@ -207,7 +207,7 @@
                         <div>
                             <div class="text-sm text-muted-color mb-1 flex align-items-center gap-2">
                                 <i class="pi pi-box text-red-500"></i>
-                                Stock faible
+                                {{ $t('admin.dashboard.metrics.low_stock.title') }}
                             </div>
                             <div class="text-2xl font-semibold mb-1">{{ metrics.low_stock_products || 0 }}</div>
                             <div class="text-xs text-muted-color">
@@ -234,7 +234,7 @@
                         <div>
                             <div class="text-sm text-muted-color mb-1 flex align-items-center gap-2">
                                 <i class="pi pi-star text-cyan-500"></i>
-                                Taux de fidélité
+                                {{ $t('admin.dashboard.metrics.retention_rate.title') }}
                             </div>
                             <div class="text-2xl font-semibold mb-1">{{ metrics.retention_rate || 'N/A' }}%</div>
                             <div class="text-xs text-muted-color">
@@ -252,14 +252,14 @@
         <!-- Charts -->
         <div class="col-12 lg:col-8">
             <Card class="surface-card shadow-1 border-round mb-4">
-                <template #title>Chiffre d'affaires (30 derniers jours)</template>
+                <template #title>{{ $t('admin.dashboard.charts.revenue_30d') }}</template>
                 <template #content>
                     <div v-if="loading" style="height: 260px" class="flex flex-column gap-2">
                         <Skeleton width="100%" height="2rem" />
                         <Skeleton width="100%" height="8rem" />
                     </div>
                     <div v-else-if="!hasData" class="flex align-items-center justify-content-center" style="height: 260px">
-                        <span class="text-muted-color text-sm">Aucune donnée disponible pour le moment.</span>
+                        <span class="text-muted-color text-sm">{{ $t('admin.common.messages.no_data') }}</span>
                     </div>
                     <div v-else style="height: 260px">
                         <Chart type="line" :data="revenueChartData" :options="revenueChartOptions" />
@@ -270,14 +270,14 @@
 
         <div class="col-12 lg:col-4">
             <Card class="surface-card shadow-1 border-round mb-4">
-                <template #title>Commandes par statut</template>
+                <template #title>{{ $t('admin.dashboard.charts.orders_by_status') }}</template>
                 <template #content>
                     <div v-if="loading" style="height: 260px" class="flex flex-column gap-2">
                         <Skeleton width="100%" height="2rem" />
                         <Skeleton width="100%" height="8rem" />
                     </div>
                     <div v-else-if="!hasData" class="flex align-items-center justify-content-center" style="height: 260px">
-                        <span class="text-muted-color text-sm">Aucune donnée disponible pour le moment.</span>
+                        <span class="text-muted-color text-sm">{{ $t('admin.common.messages.no_data') }}</span>
                     </div>
                     <div v-else style="height: 260px">
                         <Chart type="bar" :data="ordersByStatusChartData" :options="ordersByStatusChartOptions" />
@@ -289,7 +289,7 @@
         <!-- Deuxième ligne de graphiques -->
         <div class="col-12 lg:col-4">
             <Card class="surface-card shadow-1 border-round mb-4">
-                <template #title>CA par catégorie</template>
+                <template #title>{{ $t('admin.dashboard.charts.revenue_by_category') }}</template>
                 <template #content>
                     <div v-if="loading" class="flex flex-column gap-2" style="height: 300px">
                         <Skeleton height="2rem" width="100%"/>
@@ -297,7 +297,7 @@
                     </div>
                     <div v-else-if="!hasData" class="flex align-items-center justify-content-center"
                          style="height: 300px">
-                        <span class="text-muted-color text-sm">Aucune donnée disponible pour le moment.</span>
+                        <span class="text-muted-color text-sm">{{ $t('admin.common.messages.no_data') }}</span>
                     </div>
                     <div v-else style="height: 300px">
                         <Chart :data="revenueByCategoryChartData" :options="revenueByCategoryChartOptions"
@@ -309,7 +309,7 @@
 
         <div class="col-12 lg:col-4">
             <Card class="surface-card shadow-1 border-round mb-4">
-                <template #title>Top 5 produits</template>
+                <template #title>{{ $t('admin.dashboard.charts.top_products') }}</template>
                 <template #content>
                     <div v-if="loading" class="flex flex-column gap-2" style="height: 300px">
                         <Skeleton height="2rem" width="100%"/>
@@ -317,7 +317,7 @@
                     </div>
                     <div v-else-if="!hasData" class="flex align-items-center justify-content-center"
                          style="height: 300px">
-                        <span class="text-muted-color text-sm">Aucune donnée disponible pour le moment.</span>
+                        <span class="text-muted-color text-sm">{{ $t('admin.common.messages.no_data') }}</span>
                     </div>
                     <div v-else style="height: 300px">
                         <Chart :data="topProductsChartData" :options="topProductsChartOptions" type="bar"/>
@@ -328,7 +328,7 @@
 
         <div class="col-12 lg:col-4">
             <Card class="surface-card shadow-1 border-round mb-4">
-                <template #title>Évolution des clients (30j)</template>
+                <template #title>{{ $t('admin.dashboard.charts.customers_over_time') }}</template>
                 <template #content>
                     <div v-if="loading" class="flex flex-column gap-2" style="height: 300px">
                         <Skeleton height="2rem" width="100%"/>
@@ -336,7 +336,7 @@
                     </div>
                     <div v-else-if="!hasData" class="flex align-items-center justify-content-center"
                          style="height: 300px">
-                        <span class="text-muted-color text-sm">Aucune donnée disponible pour le moment.</span>
+                        <span class="text-muted-color text-sm">{{ $t('admin.common.messages.no_data') }}</span>
                     </div>
                     <div v-else style="height: 300px">
                         <Chart :data="customersOverTimeChartData" :options="customersOverTimeChartOptions" type="line"/>
@@ -348,8 +348,7 @@
         <!-- Dernières commandes -->
         <div class="col-12">
             <Card class="surface-card shadow-1 border-round">
-                <template #title>Dernières commandes</template>
-                <template #subtitle>Les 10 dernières commandes créées</template>
+                <template #title>{{ $t('admin.dashboard.recent_orders.title') }}</template>
                 <template #content>
                     <div v-if="loading" class="flex flex-column gap-2">
                         <Skeleton width="100%" height="2.5rem" />
@@ -358,26 +357,26 @@
                     </div>
                     <div v-else>
                         <DataTable :value="recentOrders" dataKey="id" responsive-layout="scroll">
-                            <Column field="number" header="Commande" />
-                            <Column field="customer_name" header="Client" />
-                            <Column field="total" header="Total">
+                            <Column :header="$t('admin.orders.columns.order_number')" field="number"/>
+                            <Column :header="$t('admin.orders.columns.customer')" field="customer_name"/>
+                            <Column :header="$t('admin.orders.fields.total')" field="total">
                                 <template #body="{ data }">
                                     {{ formatMoney(data.total) }}
                                 </template>
                             </Column>
-                            <Column field="status" header="Statut">
+                            <Column :header="$t('admin.orders.columns.status')" field="status">
                                 <template #body="{ data }">
                                     <Tag :value="data.status" :severity="statusSeverity(data.status)" />
                                 </template>
                             </Column>
-                            <Column field="created_at" header="Date">
+                            <Column :header="$t('admin.orders.columns.date')" field="created_at">
                                 <template #body="{ data }">
                                     {{ formatDate(data.created_at) }}
                                 </template>
                             </Column>
                         </DataTable>
                         <div v-if="!recentOrders.length" class="text-center text-sm text-muted-color mt-3">
-                            Aucune commande récente.
+                            {{ $t('admin.common.messages.no_data') }}
                         </div>
                     </div>
                 </template>
@@ -388,6 +387,7 @@
 
 <script setup>
 import {computed} from 'vue';
+import {useI18n} from 'vue-i18n';
 import {useAdminDashboard} from '@/composables/admin/useAdminDashboard';
 
 import Card from 'primevue/card';
@@ -397,6 +397,8 @@ import Column from 'primevue/column';
 import Tag from 'primevue/tag';
 import Skeleton from 'primevue/skeleton';
 import Button from 'primevue/button';
+
+const {t} = useI18n();
 
 const {
     loading,

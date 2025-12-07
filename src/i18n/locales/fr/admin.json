@@ -1,0 +1,452 @@
+{
+    "common": {
+        "actions": {
+            "save": "Enregistrer",
+            "cancel": "Annuler",
+            "delete": "Supprimer",
+            "edit": "Modifier",
+            "create": "Créer",
+            "search": "Rechercher",
+            "filter": "Filtrer",
+            "export": "Exporter",
+            "import": "Importer",
+            "refresh": "Actualiser"
+        },
+        "status": {
+            "active": "Actif",
+            "inactive": "Inactif",
+            "pending": "En attente",
+            "completed": "Terminé",
+            "cancelled": "Annulé"
+        },
+        "messages": {
+            "required_fields": "Les champs marqués d'un {symbol} sont obligatoires",
+            "save_success": "Enregistré avec succès",
+            "save_error": "Erreur lors de l'enregistrement",
+            "delete_confirm": "Êtes-vous sûr de vouloir supprimer cet élément ?",
+            "delete_success": "Supprimé avec succès",
+            "delete_error": "Erreur lors de la suppression",
+            "no_data": "Aucune donnée disponible"
+        }
+    },
+    "products": {
+        "title": "Produits",
+        "subtitle": "Gestion du catalogue produits",
+        "new": "Nouveau produit",
+        "edit": "Modifier le produit",
+        "sections": {
+            "basic": "Informations de base",
+            "pricing": "Prix et stock",
+            "media": "Médias",
+            "categorization": "Catégorisation",
+            "settings": "Paramètres"
+        },
+        "fields": {
+            "name": {
+                "label": "Nom du produit",
+                "placeholder": "Ex: T-shirt en coton bio",
+                "hint": "Nom affiché sur le site"
+            },
+            "sku": {
+                "label": "SKU",
+                "placeholder": "Ex: TSH-001",
+                "hint": "Code unique du produit"
+            },
+            "slug": {
+                "label": "Slug",
+                "placeholder": "t-shirt-coton-bio",
+                "hint": "URL du produit (sans espaces ni accents)"
+            },
+            "short_description": {
+                "label": "Description courte",
+                "placeholder": "Résumé du produit en 1-2 phrases",
+                "hint": "Affichée dans les listes de produits"
+            },
+            "description": {
+                "label": "Description complète",
+                "placeholder": "Décrivez le produit en détail...",
+                "hint": "Description détaillée du produit"
+            },
+            "price": {
+                "label": "Prix",
+                "placeholder": "0.00",
+                "hint": "Prix de vente TTC"
+            },
+            "stock": {
+                "label": "Stock disponible",
+                "placeholder": "0",
+                "hint": "Quantité en stock"
+            },
+            "main_image_url": {
+                "label": "URL image principale",
+                "placeholder": "https://example.com/images/produit.jpg",
+                "hint": "Image principale du produit"
+            },
+            "category": {
+                "label": "Catégorie",
+                "placeholder": "Sélectionner une catégorie",
+                "hint": "Catégorie du produit"
+            },
+            "is_active": {
+                "label_active": "Produit actif",
+                "label_inactive": "Produit inactif",
+                "hint_active": "Visible sur le site",
+                "hint_inactive": "Masqué sur le site"
+            }
+        },
+        "columns": {
+            "product": "Produit",
+            "category": "Catégorie",
+            "price": "Prix",
+            "stock": "Stock",
+            "status": "Statut",
+            "created_at": "Créé le",
+            "actions": "Actions"
+        }
+    },
+    "categories": {
+        "title": "Catégories",
+        "subtitle": "Gestion des catégories du catalogue",
+        "new": "Nouvelle catégorie",
+        "edit": "Modifier la catégorie",
+        "sections": {
+            "basic": "Informations de base",
+            "hierarchy": "Hiérarchie",
+            "settings": "Paramètres"
+        },
+        "fields": {
+            "name": {
+                "label": "Nom de la catégorie",
+                "placeholder": "Ex: Vêtements, Électronique...",
+                "hint": "Nom affiché sur le site"
+            },
+            "slug": {
+                "label": "Slug",
+                "placeholder": "vetements, electronique...",
+                "hint": "URL de la catégorie (sans espaces ni accents)"
+            },
+            "parent": {
+                "label": "Catégorie parente",
+                "placeholder": "Aucune (catégorie principale)",
+                "hint": "Laisser vide pour une catégorie principale"
+            },
+            "position": {
+                "label": "Position d'affichage",
+                "placeholder": "1",
+                "hint": "Ordre d'affichage dans le menu"
+            },
+            "is_active": {
+                "label_active": "Catégorie active",
+                "label_inactive": "Catégorie inactive",
+                "hint_active": "Visible sur le site",
+                "hint_inactive": "Masquée sur le site"
+            }
+        },
+        "columns": {
+            "name": "Nom",
+            "parent": "Parent",
+            "position": "Position",
+            "status": "Statut",
+            "products_count": "Produits",
+            "created_at": "Créé le",
+            "actions": "Actions"
+        },
+        "filters": {
+            "status": "Statut",
+            "parent": "Catégorie parent"
+        }
+    },
+    "orders": {
+        "title": "Commandes",
+        "subtitle": "Gestion des commandes clients",
+        "view": "Voir la commande",
+        "sections": {
+            "customer": "Informations client",
+            "items": "Articles",
+            "totals": "Totaux",
+            "payment": "Paiement et livraison",
+            "status": "Statut"
+        },
+        "fields": {
+            "order_number": "N° de commande",
+            "customer": "Client",
+            "status": {
+                "label": "Statut",
+                "pending": "En attente",
+                "processing": "En cours",
+                "shipped": "Expédiée",
+                "delivered": "Livrée",
+                "cancelled": "Annulée"
+            },
+            "payment_method": {
+                "label": "Méthode de paiement",
+                "card": "Carte bancaire",
+                "paypal": "PayPal",
+                "bank_transfer": "Virement bancaire",
+                "cash": "Espèces",
+                "check": "Chèque"
+            },
+            "payment_status": {
+                "label": "Statut de paiement",
+                "paid": "Payé",
+                "pending": "En attente",
+                "failed": "Échoué",
+                "refunded": "Remboursé"
+            },
+            "notes": {
+                "label": "Notes internes",
+                "placeholder": "Ajouter des notes pour cette commande...",
+                "hint": "Visibles uniquement par les administrateurs"
+            },
+            "subtotal": "Sous-total",
+            "discount": "Remise",
+            "shipping": "Frais de port",
+            "total": "Total"
+        },
+        "columns": {
+            "order_number": "N° commande",
+            "customer": "Client",
+            "date": "Date",
+            "total": "Total",
+            "status": "Statut",
+            "payment": "Paiement",
+            "actions": "Actions"
+        }
+    },
+    "customers": {
+        "title": "Clients",
+        "subtitle": "Gestion des clients",
+        "new": "Nouveau client",
+        "edit": "Modifier le client",
+        "sections": {
+            "personal": "Informations personnelles",
+            "contact": "Coordonnées",
+            "company": "Informations entreprise",
+            "settings": "Paramètres"
+        },
+        "fields": {
+            "type": {
+                "label": "Type de client",
+                "individual": "Particulier",
+                "company": "Entreprise"
+            },
+            "first_name": {
+                "label": "Prénom",
+                "placeholder": "Jean",
+                "hint": "Prénom du client"
+            },
+            "last_name": {
+                "label": "Nom",
+                "placeholder": "Dupont",
+                "hint": "Nom de famille du client"
+            },
+            "email": {
+                "label": "Email",
+                "placeholder": "jean.dupont@example.com",
+                "hint": "Adresse email principale"
+            },
+            "phone": {
+                "label": "Téléphone",
+                "placeholder": "+33 6 12 34 56 78",
+                "hint": "Numéro de téléphone"
+            },
+            "company_name": {
+                "label": "Nom de l'entreprise",
+                "placeholder": "Entreprise SARL",
+                "hint": "Nom officiel de l'entreprise"
+            },
+            "vat_number": {
+                "label": "N° TVA",
+                "placeholder": "FR12345678901",
+                "hint": "Numéro de TVA intracommunautaire"
+            },
+            "status": {
+                "label": "Statut",
+                "active": "Actif",
+                "inactive": "Inactif",
+                "prospect": "Prospect"
+            }
+        },
+        "columns": {
+            "name": "Nom",
+            "email": "Email",
+            "phone": "Téléphone",
+            "company": "Entreprise",
+            "orders": "Commandes",
+            "total_spent": "Total dépensé",
+            "status": "Statut",
+            "created_at": "Client depuis",
+            "actions": "Actions"
+        }
+    },
+    "coupons": {
+        "title": "Coupons",
+        "subtitle": "Gestion des codes promotionnels",
+        "new": "Nouveau coupon",
+        "edit": "Modifier le coupon",
+        "sections": {
+            "basic": "Informations de base",
+            "discount": "Réduction",
+            "restrictions": "Restrictions",
+            "validity": "Validité"
+        },
+        "fields": {
+            "code": {
+                "label": "Code",
+                "placeholder": "PROMO2024",
+                "hint": "Code unique du coupon"
+            },
+            "description": {
+                "label": "Description",
+                "placeholder": "Promotion de printemps",
+                "hint": "Description interne du coupon"
+            },
+            "type": {
+                "label": "Type de réduction",
+                "percentage": "Pourcentage",
+                "fixed": "Montant fixe"
+            },
+            "value": {
+                "label": "Valeur",
+                "placeholder": "10",
+                "hint": "Montant ou pourcentage de la réduction"
+            },
+            "min_order_amount": {
+                "label": "Montant minimum de commande",
+                "placeholder": "50.00",
+                "hint": "Commande minimale pour utiliser ce coupon"
+            },
+            "max_uses": {
+                "label": "Utilisations maximales",
+                "placeholder": "100",
+                "hint": "Nombre total d'utilisations autorisées"
+            },
+            "usage_per_customer": {
+                "label": "Utilisations par client",
+                "placeholder": "1",
+                "hint": "Nombre d'utilisations par client"
+            },
+            "start_date": {
+                "label": "Date de début",
+                "hint": "Date à partir de laquelle le coupon est valide"
+            },
+            "end_date": {
+                "label": "Date de fin",
+                "hint": "Date jusqu'à laquelle le coupon est valide"
+            },
+            "is_active": {
+                "label_active": "Coupon actif",
+                "label_inactive": "Coupon inactif",
+                "hint_active": "Le coupon peut être utilisé",
+                "hint_inactive": "Le coupon ne peut pas être utilisé"
+            }
+        },
+        "columns": {
+            "code": "Code",
+            "description": "Description",
+            "type": "Type",
+            "value": "Valeur",
+            "uses": "Utilisations",
+            "validity": "Validité",
+            "status": "Statut",
+            "actions": "Actions"
+        }
+    },
+    "banners": {
+        "title": "Bannières",
+        "subtitle": "Gestion des bannières du site",
+        "new": "Nouvelle bannière",
+        "edit": "Modifier la bannière",
+        "fields": {
+            "title": {
+                "label": "Titre",
+                "placeholder": "Promotion exceptionnelle",
+                "hint": "Titre de la bannière"
+            },
+            "description": {
+                "label": "Description",
+                "placeholder": "Jusqu'à -50% sur une sélection",
+                "hint": "Texte descriptif"
+            },
+            "image_url": {
+                "label": "URL de l'image",
+                "placeholder": "https://example.com/banner.jpg",
+                "hint": "Lien vers l'image de la bannière"
+            },
+            "link_url": {
+                "label": "URL de destination",
+                "placeholder": "https://example.com/promotions",
+                "hint": "Page de destination au clic"
+            },
+            "position": {
+                "label": "Position",
+                "placeholder": "1",
+                "hint": "Ordre d'affichage"
+            },
+            "is_active": {
+                "label_active": "Bannière active",
+                "label_inactive": "Bannière inactive",
+                "hint_active": "Visible sur le site",
+                "hint_inactive": "Masquée sur le site"
+            }
+        },
+        "columns": {
+            "title": "Titre",
+            "position": "Position",
+            "status": "Statut",
+            "created_at": "Créé le",
+            "actions": "Actions"
+        }
+    },
+    "dashboard": {
+        "title": "Tableau de bord",
+        "subtitle": "Vue d'ensemble de votre boutique",
+        "metrics": {
+            "revenue": {
+                "title": "Chiffre d'affaires",
+                "period": "30 derniers jours"
+            },
+            "orders": {
+                "title": "Commandes",
+                "period": "30 derniers jours"
+            },
+            "avg_order": {
+                "title": "Panier moyen"
+            },
+            "customers": {
+                "title": "Nouveaux clients",
+                "period": "30 derniers jours"
+            },
+            "conversion_rate": {
+                "title": "Taux de conversion"
+            },
+            "pending_orders": {
+                "title": "Commandes en attente"
+            },
+            "low_stock": {
+                "title": "Produits en stock faible"
+            },
+            "retention_rate": {
+                "title": "Taux de fidélité"
+            }
+        },
+        "charts": {
+            "revenue_30d": "Évolution du CA (30j)",
+            "orders_by_status": "Commandes par statut",
+            "revenue_by_category": "CA par catégorie",
+            "top_products": "Top 5 produits",
+            "customers_over_time": "Évolution des clients"
+        },
+        "recent_orders": {
+            "title": "Dernières commandes",
+            "view_all": "Voir toutes les commandes"
+        }
+    },
+    "settings": {
+        "title": "Paramètres",
+        "account": {
+            "title": "Compte administrateur",
+            "subtitle": "Gérer vos informations de compte"
+        }
+    }
+}

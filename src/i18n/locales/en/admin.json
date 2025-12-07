@@ -1,0 +1,452 @@
+{
+    "common": {
+        "actions": {
+            "save": "Save",
+            "cancel": "Cancel",
+            "delete": "Delete",
+            "edit": "Edit",
+            "create": "Create",
+            "search": "Search",
+            "filter": "Filter",
+            "export": "Export",
+            "import": "Import",
+            "refresh": "Refresh"
+        },
+        "status": {
+            "active": "Active",
+            "inactive": "Inactive",
+            "pending": "Pending",
+            "completed": "Completed",
+            "cancelled": "Cancelled"
+        },
+        "messages": {
+            "required_fields": "Fields marked with {symbol} are required",
+            "save_success": "Saved successfully",
+            "save_error": "Error while saving",
+            "delete_confirm": "Are you sure you want to delete this item?",
+            "delete_success": "Deleted successfully",
+            "delete_error": "Error while deleting",
+            "no_data": "No data available"
+        }
+    },
+    "products": {
+        "title": "Products",
+        "subtitle": "Product catalog management",
+        "new": "New product",
+        "edit": "Edit product",
+        "sections": {
+            "basic": "Basic information",
+            "pricing": "Pricing and stock",
+            "media": "Media",
+            "categorization": "Categorization",
+            "settings": "Settings"
+        },
+        "fields": {
+            "name": {
+                "label": "Product name",
+                "placeholder": "e.g.: Organic cotton t-shirt",
+                "hint": "Name displayed on the website"
+            },
+            "sku": {
+                "label": "SKU",
+                "placeholder": "e.g.: TSH-001",
+                "hint": "Unique product code"
+            },
+            "slug": {
+                "label": "Slug",
+                "placeholder": "organic-cotton-t-shirt",
+                "hint": "Product URL (no spaces or accents)"
+            },
+            "short_description": {
+                "label": "Short description",
+                "placeholder": "Product summary in 1-2 sentences",
+                "hint": "Displayed in product lists"
+            },
+            "description": {
+                "label": "Full description",
+                "placeholder": "Describe the product in detail...",
+                "hint": "Detailed product description"
+            },
+            "price": {
+                "label": "Price",
+                "placeholder": "0.00",
+                "hint": "Selling price incl. VAT"
+            },
+            "stock": {
+                "label": "Stock available",
+                "placeholder": "0",
+                "hint": "Quantity in stock"
+            },
+            "main_image_url": {
+                "label": "Main image URL",
+                "placeholder": "https://example.com/images/product.jpg",
+                "hint": "Main product image"
+            },
+            "category": {
+                "label": "Category",
+                "placeholder": "Select a category",
+                "hint": "Product category"
+            },
+            "is_active": {
+                "label_active": "Active product",
+                "label_inactive": "Inactive product",
+                "hint_active": "Visible on website",
+                "hint_inactive": "Hidden on website"
+            }
+        },
+        "columns": {
+            "product": "Product",
+            "category": "Category",
+            "price": "Price",
+            "stock": "Stock",
+            "status": "Status",
+            "created_at": "Created at",
+            "actions": "Actions"
+        }
+    },
+    "categories": {
+        "title": "Categories",
+        "subtitle": "Catalog categories management",
+        "new": "New category",
+        "edit": "Edit category",
+        "sections": {
+            "basic": "Basic information",
+            "hierarchy": "Hierarchy",
+            "settings": "Settings"
+        },
+        "fields": {
+            "name": {
+                "label": "Category name",
+                "placeholder": "e.g.: Clothing, Electronics...",
+                "hint": "Name displayed on the website"
+            },
+            "slug": {
+                "label": "Slug",
+                "placeholder": "clothing, electronics...",
+                "hint": "Category URL (no spaces or accents)"
+            },
+            "parent": {
+                "label": "Parent category",
+                "placeholder": "None (main category)",
+                "hint": "Leave empty for a main category"
+            },
+            "position": {
+                "label": "Display position",
+                "placeholder": "1",
+                "hint": "Display order in menu"
+            },
+            "is_active": {
+                "label_active": "Active category",
+                "label_inactive": "Inactive category",
+                "hint_active": "Visible on website",
+                "hint_inactive": "Hidden on website"
+            }
+        },
+        "columns": {
+            "name": "Name",
+            "parent": "Parent",
+            "position": "Position",
+            "status": "Status",
+            "products_count": "Products",
+            "created_at": "Created at",
+            "actions": "Actions"
+        },
+        "filters": {
+            "status": "Status",
+            "parent": "Parent category"
+        }
+    },
+    "orders": {
+        "title": "Orders",
+        "subtitle": "Customer orders management",
+        "view": "View order",
+        "sections": {
+            "customer": "Customer information",
+            "items": "Items",
+            "totals": "Totals",
+            "payment": "Payment and shipping",
+            "status": "Status"
+        },
+        "fields": {
+            "order_number": "Order number",
+            "customer": "Customer",
+            "status": {
+                "label": "Status",
+                "pending": "Pending",
+                "processing": "Processing",
+                "shipped": "Shipped",
+                "delivered": "Delivered",
+                "cancelled": "Cancelled"
+            },
+            "payment_method": {
+                "label": "Payment method",
+                "card": "Credit card",
+                "paypal": "PayPal",
+                "bank_transfer": "Bank transfer",
+                "cash": "Cash",
+                "check": "Check"
+            },
+            "payment_status": {
+                "label": "Payment status",
+                "paid": "Paid",
+                "pending": "Pending",
+                "failed": "Failed",
+                "refunded": "Refunded"
+            },
+            "notes": {
+                "label": "Internal notes",
+                "placeholder": "Add notes for this order...",
+                "hint": "Only visible to administrators"
+            },
+            "subtotal": "Subtotal",
+            "discount": "Discount",
+            "shipping": "Shipping",
+            "total": "Total"
+        },
+        "columns": {
+            "order_number": "Order #",
+            "customer": "Customer",
+            "date": "Date",
+            "total": "Total",
+            "status": "Status",
+            "payment": "Payment",
+            "actions": "Actions"
+        }
+    },
+    "customers": {
+        "title": "Customers",
+        "subtitle": "Customer management",
+        "new": "New customer",
+        "edit": "Edit customer",
+        "sections": {
+            "personal": "Personal information",
+            "contact": "Contact details",
+            "company": "Company information",
+            "settings": "Settings"
+        },
+        "fields": {
+            "type": {
+                "label": "Customer type",
+                "individual": "Individual",
+                "company": "Company"
+            },
+            "first_name": {
+                "label": "First name",
+                "placeholder": "John",
+                "hint": "Customer's first name"
+            },
+            "last_name": {
+                "label": "Last name",
+                "placeholder": "Doe",
+                "hint": "Customer's last name"
+            },
+            "email": {
+                "label": "Email",
+                "placeholder": "john.doe@example.com",
+                "hint": "Primary email address"
+            },
+            "phone": {
+                "label": "Phone",
+                "placeholder": "+1 234 567 8900",
+                "hint": "Phone number"
+            },
+            "company_name": {
+                "label": "Company name",
+                "placeholder": "Company Ltd.",
+                "hint": "Official company name"
+            },
+            "vat_number": {
+                "label": "VAT number",
+                "placeholder": "GB123456789",
+                "hint": "VAT identification number"
+            },
+            "status": {
+                "label": "Status",
+                "active": "Active",
+                "inactive": "Inactive",
+                "prospect": "Prospect"
+            }
+        },
+        "columns": {
+            "name": "Name",
+            "email": "Email",
+            "phone": "Phone",
+            "company": "Company",
+            "orders": "Orders",
+            "total_spent": "Total spent",
+            "status": "Status",
+            "created_at": "Customer since",
+            "actions": "Actions"
+        }
+    },
+    "coupons": {
+        "title": "Coupons",
+        "subtitle": "Promotional codes management",
+        "new": "New coupon",
+        "edit": "Edit coupon",
+        "sections": {
+            "basic": "Basic information",
+            "discount": "Discount",
+            "restrictions": "Restrictions",
+            "validity": "Validity"
+        },
+        "fields": {
+            "code": {
+                "label": "Code",
+                "placeholder": "PROMO2024",
+                "hint": "Unique coupon code"
+            },
+            "description": {
+                "label": "Description",
+                "placeholder": "Spring promotion",
+                "hint": "Internal coupon description"
+            },
+            "type": {
+                "label": "Discount type",
+                "percentage": "Percentage",
+                "fixed": "Fixed amount"
+            },
+            "value": {
+                "label": "Value",
+                "placeholder": "10",
+                "hint": "Discount amount or percentage"
+            },
+            "min_order_amount": {
+                "label": "Minimum order amount",
+                "placeholder": "50.00",
+                "hint": "Minimum order to use this coupon"
+            },
+            "max_uses": {
+                "label": "Maximum uses",
+                "placeholder": "100",
+                "hint": "Total number of allowed uses"
+            },
+            "usage_per_customer": {
+                "label": "Uses per customer",
+                "placeholder": "1",
+                "hint": "Number of uses per customer"
+            },
+            "start_date": {
+                "label": "Start date",
+                "hint": "Date from which the coupon is valid"
+            },
+            "end_date": {
+                "label": "End date",
+                "hint": "Date until which the coupon is valid"
+            },
+            "is_active": {
+                "label_active": "Active coupon",
+                "label_inactive": "Inactive coupon",
+                "hint_active": "Coupon can be used",
+                "hint_inactive": "Coupon cannot be used"
+            }
+        },
+        "columns": {
+            "code": "Code",
+            "description": "Description",
+            "type": "Type",
+            "value": "Value",
+            "uses": "Uses",
+            "validity": "Validity",
+            "status": "Status",
+            "actions": "Actions"
+        }
+    },
+    "banners": {
+        "title": "Banners",
+        "subtitle": "Website banners management",
+        "new": "New banner",
+        "edit": "Edit banner",
+        "fields": {
+            "title": {
+                "label": "Title",
+                "placeholder": "Exceptional promotion",
+                "hint": "Banner title"
+            },
+            "description": {
+                "label": "Description",
+                "placeholder": "Up to -50% on a selection",
+                "hint": "Descriptive text"
+            },
+            "image_url": {
+                "label": "Image URL",
+                "placeholder": "https://example.com/banner.jpg",
+                "hint": "Link to banner image"
+            },
+            "link_url": {
+                "label": "Destination URL",
+                "placeholder": "https://example.com/promotions",
+                "hint": "Landing page on click"
+            },
+            "position": {
+                "label": "Position",
+                "placeholder": "1",
+                "hint": "Display order"
+            },
+            "is_active": {
+                "label_active": "Active banner",
+                "label_inactive": "Inactive banner",
+                "hint_active": "Visible on website",
+                "hint_inactive": "Hidden on website"
+            }
+        },
+        "columns": {
+            "title": "Title",
+            "position": "Position",
+            "status": "Status",
+            "created_at": "Created at",
+            "actions": "Actions"
+        }
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "subtitle": "Overview of your store",
+        "metrics": {
+            "revenue": {
+                "title": "Revenue",
+                "period": "Last 30 days"
+            },
+            "orders": {
+                "title": "Orders",
+                "period": "Last 30 days"
+            },
+            "avg_order": {
+                "title": "Average order value"
+            },
+            "customers": {
+                "title": "New customers",
+                "period": "Last 30 days"
+            },
+            "conversion_rate": {
+                "title": "Conversion rate"
+            },
+            "pending_orders": {
+                "title": "Pending orders"
+            },
+            "low_stock": {
+                "title": "Low stock products"
+            },
+            "retention_rate": {
+                "title": "Retention rate"
+            }
+        },
+        "charts": {
+            "revenue_30d": "Revenue trend (30d)",
+            "orders_by_status": "Orders by status",
+            "revenue_by_category": "Revenue by category",
+            "top_products": "Top 5 products",
+            "customers_over_time": "Customer growth"
+        },
+        "recent_orders": {
+            "title": "Recent orders",
+            "view_all": "View all orders"
+        }
+    },
+    "settings": {
+        "title": "Settings",
+        "account": {
+            "title": "Admin account",
+            "subtitle": "Manage your account information"
+        }
+    }
+}

@@ -125,62 +125,171 @@
         </div>
     </div>
 
-    <Dialog v-model:visible="customerDialog" :header="dialogTitle" modal class="w-11 md:w-7">
-        <div class="grid formgrid p-fluid">
-            <div class="col-12 md:col-6">
-                <label for="first_name" class="font-semibold">Prénom</label>
-                <InputText id="first_name" v-model="form.first_name" />
-            </div>
-            <div class="col-12 md:col-6">
-                <label for="last_name" class="font-semibold">Nom</label>
-                <InputText id="last_name" v-model="form.last_name" />
-            </div>
-            <div class="col-12 md:col-6">
-                <label for="email" class="font-semibold">Email</label>
-                <InputText id="email" v-model="form.email" />
-            </div>
-            <div class="col-12 md:col-6">
-                <label for="phone" class="font-semibold">Téléphone</label>
-                <InputText id="phone" v-model="form.phone" />
-            </div>
+    <Dialog v-model:visible="customerDialog" :header="dialogTitle" class="w-11 md:w-8" modal>
+        <div class="formgrid grid p-fluid">
+            <!-- Section Informations personnelles -->
             <div class="col-12">
-                <label for="company_name" class="font-semibold">Société</label>
-                <InputText id="company_name" v-model="form.company_name" />
+                <Divider align="left">
+                    <div class="flex align-items-center gap-2">
+                        <i class="pi pi-user text-primary"></i>
+                        <span class="font-semibold text-lg">Informations personnelles</span>
+                    </div>
+                </Divider>
             </div>
+
             <div class="col-12 md:col-6">
-                <label for="type" class="font-semibold">Type</label>
-                <Select id="type" v-model="form.type" :options="dialogTypeOptions" optionLabel="label" optionValue="value" />
-            </div>
-            <div class="col-12 md:col-6">
-                <label for="status" class="font-semibold">Statut</label>
-                <Select id="status" v-model="form.status" :options="dialogStatusOptions" optionLabel="label" optionValue="value" />
-            </div>
-            <div class="col-12 md:col-6">
-                <label for="country" class="font-semibold">Pays</label>
-                <Select
-                    id="country"
-                    v-model="form.country"
-                    :options="countryOptions.filter((c) => c.value)"
-                    optionLabel="label"
-                    optionValue="value"
+                <label class="font-semibold block mb-2" for="first_name">
+                    Prénom <span class="text-red-500">*</span>
+                </label>
+                <InputText
+                    id="first_name"
+                    v-model="form.first_name"
+                    class="w-full"
+                    placeholder="Ex: Jean"
                 />
             </div>
+
             <div class="col-12 md:col-6">
-                <label for="city" class="font-semibold">Ville</label>
-                <InputText id="city" v-model="form.city" />
+                <label class="font-semibold block mb-2" for="last_name">
+                    Nom <span class="text-red-500">*</span>
+                </label>
+                <InputText
+                    id="last_name"
+                    v-model="form.last_name"
+                    class="w-full"
+                    placeholder="Ex: Dupont"
+                />
             </div>
+
+            <!-- Section Contact -->
+            <div class="col-12 mt-3">
+                <Divider align="left">
+                    <div class="flex align-items-center gap-2">
+                        <i class="pi pi-envelope text-primary"></i>
+                        <span class="font-semibold text-lg">Coordonnées</span>
+                    </div>
+                </Divider>
+            </div>
+
+            <div class="col-12 md:col-6">
+                <label class="font-semibold block mb-2" for="email">
+                    Email <span class="text-red-500">*</span>
+                </label>
+                <InputText
+                    id="email"
+                    v-model="form.email"
+                    class="w-full"
+                    placeholder="email@exemple.com"
+                    type="email"
+                />
+            </div>
+
+            <div class="col-12 md:col-6">
+                <label class="font-semibold block mb-2" for="phone">
+                    Téléphone
+                </label>
+                <InputText
+                    id="phone"
+                    v-model="form.phone"
+                    class="w-full"
+                    placeholder="+33 6 12 34 56 78"
+                />
+            </div>
+
+            <!-- Section Entreprise -->
+            <div class="col-12 mt-3">
+                <Divider align="left">
+                    <div class="flex align-items-center gap-2">
+                        <i class="pi pi-building text-primary"></i>
+                        <span class="font-semibold text-lg">Informations entreprise</span>
+                    </div>
+                </Divider>
+            </div>
+
             <div class="col-12">
-                <label for="address_line1" class="font-semibold">Adresse</label>
-                <InputText id="address_line1" v-model="form.address_line1" />
+                <label class="font-semibold block mb-2" for="company_name">
+                    Nom de la société
+                </label>
+                <InputText
+                    id="company_name"
+                    v-model="form.company_name"
+                    class="w-full"
+                    placeholder="Ex: ACME Corporation"
+                />
+                <small class="text-muted-color">Laisser vide si client particulier</small>
             </div>
+
+            <!-- Section Statut -->
+            <div class="col-12 mt-3">
+                <Divider align="left">
+                    <div class="flex align-items-center gap-2">
+                        <i class="pi pi-cog text-primary"></i>
+                        <span class="font-semibold text-lg">Paramètres</span>
+                    </div>
+                </Divider>
+            </div>
+
             <div class="col-12 md:col-6">
-                <label for="postal_code" class="font-semibold">Code postal</label>
-                <InputText id="postal_code" v-model="form.postal_code" />
+                <label class="font-semibold block mb-2" for="status">
+                    Statut <span class="text-red-500">*</span>
+                </label>
+                <Select
+                    id="status"
+                    v-model="form.status"
+                    :options="dialogStatusOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    class="w-full"
+                />
+                <small class="text-muted-color">Définit l'état du compte client</small>
+            </div>
+
+            <div class="col-12 md:col-6">
+                <div class="field">
+                    <label class="font-semibold block mb-2">Type de client</label>
+                    <div class="flex gap-4 align-items-center">
+                        <div class="flex align-items-center">
+                            <RadioButton
+                                v-model="form.type"
+                                inputId="type_individual"
+                                value="individual"
+                            />
+                            <label class="ml-2" for="type_individual">Particulier</label>
+                        </div>
+                        <div class="flex align-items-center">
+                            <RadioButton
+                                v-model="form.type"
+                                inputId="type_company"
+                                value="company"
+                            />
+                            <label class="ml-2" for="type_company">Entreprise</label>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
         <template #footer>
-            <Button label="Annuler" icon="pi pi-times" text @click="hideDialog" />
-            <Button label="Enregistrer" icon="pi pi-check" @click="saveCustomer" />
+            <div class="flex justify-content-between align-items-center w-full">
+                <small class="text-muted-color">
+                    <i class="pi pi-info-circle mr-1"></i>
+                    Les champs marqués d'un <span class="text-red-500">*</span> sont obligatoires
+                </small>
+                <div class="flex gap-2">
+                    <Button
+                        icon="pi pi-times"
+                        label="Annuler"
+                        severity="secondary"
+                        text
+                        @click="hideDialog"
+                    />
+                    <Button
+                        icon="pi pi-check"
+                        label="Enregistrer"
+                        @click="saveCustomer"
+                    />
+                </div>
+            </div>
         </template>
     </Dialog>
 
@@ -197,6 +306,8 @@ import Select from 'primevue/select';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import Tag from 'primevue/tag';
+import Divider from 'primevue/divider';
+import RadioButton from 'primevue/radiobutton';
 import ConfirmDialog from 'primevue/confirmdialog';
 
 const {
@@ -263,6 +374,7 @@ function statusSeverity(status) {
 </script>
 
 <style scoped>
+/* Style des filtres de recherche */
 .card .p-input-icon-left > .p-inputtext,
 .card .p-select,
 .card .p-button {
@@ -274,5 +386,101 @@ function statusSeverity(status) {
     .card .p-select {
         width: 12rem;
     }
+}
+
+/* Style Sakai professionnel pour le formulaire */
+:deep(.p-dialog) {
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+:deep(.p-dialog-header) {
+    border-bottom: 1px solid var(--surface-border);
+    padding: 1.5rem;
+}
+
+:deep(.p-dialog-content) {
+    padding: 1.5rem;
+}
+
+:deep(.p-dialog-footer) {
+    border-top: 1px solid var(--surface-border);
+    padding: 1.25rem 1.5rem;
+}
+
+/* Style des dividers */
+:deep(.p-divider) {
+    margin: 0.5rem 0;
+}
+
+:deep(.p-divider .p-divider-content) {
+    background-color: transparent;
+}
+
+:deep(.p-divider-horizontal.p-divider-left::before) {
+    flex-grow: 0;
+    width: 0;
+}
+
+/* Style des inputs dans le formulaire */
+:deep(.formgrid .p-inputtext),
+:deep(.formgrid .p-select) {
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+}
+
+:deep(.formgrid .p-inputtext:focus),
+:deep(.formgrid .p-select:focus) {
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+    border-color: #3b82f6;
+}
+
+:deep(.formgrid .p-inputtext::placeholder) {
+    color: var(--text-color-secondary);
+    opacity: 0.7;
+}
+
+/* Style des radio buttons */
+:deep(.p-radiobutton) {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+:deep(.p-radiobutton .p-radiobutton-box) {
+    border-radius: 50%;
+    transition: all 0.2s ease-in-out;
+}
+
+:deep(.p-radiobutton .p-radiobutton-box.p-highlight) {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+}
+
+/* Style des labels et hints */
+.formgrid label {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.formgrid small.text-muted-color {
+    display: block;
+    margin-top: 0.375rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+/* Icônes de section */
+.text-primary {
+    color: #3b82f6 !important;
+}
+
+/* Animation d'entrée du dialog */
+:deep(.p-dialog-enter-active) {
+    transition: all 0.3s ease;
+}
+
+:deep(.p-dialog-enter-from) {
+    opacity: 0;
+    transform: scale(0.95);
 }
 </style>

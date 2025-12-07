@@ -22,7 +22,11 @@ export function useAdminDashboard() {
         orders_30d_trend: 0,
         avg_order_value_30d: 0,
         new_customers_30d: 0,
-        new_customers_30d_trend: 0
+        new_customers_30d_trend: 0,
+        conversion_rate: null,
+        pending_orders: 0,
+        low_stock_products: 0,
+        retention_rate: 0
     });
 
     const revenueChart = reactive({
@@ -385,6 +389,10 @@ export function useAdminDashboard() {
                 metrics.avg_order_value_30d = data.metrics.avg_order_value_30d ?? 0;
                 metrics.new_customers_30d = data.metrics.new_customers_30d ?? 0;
                 metrics.new_customers_30d_trend = data.metrics.new_customers_30d_trend ?? 0;
+                metrics.conversion_rate = data.metrics.conversion_rate ?? null;
+                metrics.pending_orders = data.metrics.pending_orders ?? 0;
+                metrics.low_stock_products = data.metrics.low_stock_products ?? 0;
+                metrics.retention_rate = data.metrics.retention_rate ?? 0;
             }
 
             if (data.revenue_chart) {
