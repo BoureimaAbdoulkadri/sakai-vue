@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { useI18n } from 'vue-i18n';
+import {computed} from 'vue';
+import {useRouter} from 'vue-router';
+import {useI18n} from 'vue-i18n';
 import Button from 'primevue/button';
 
 const router = useRouter();
@@ -31,8 +31,8 @@ const categories = computed(() => [
     }
 ]);
 
-function goToCategory() {
-    router.push({ name: 'client-catalog' });
+function goToCategory(categoryKey) {
+    router.push({name: 'client-catalog', query: {category: categoryKey}});
 }
 </script>
 
@@ -50,7 +50,7 @@ function goToCategory() {
                 :key="category.key"
                 class="category-card"
                 :style="{ animationDelay: `${index * 120}ms` }"
-                @click="goToCategory"
+                @click="goToCategory(category.key)"
             >
                 <div class="category-image-wrapper">
                     <img :src="category.image" :alt="category.label" />

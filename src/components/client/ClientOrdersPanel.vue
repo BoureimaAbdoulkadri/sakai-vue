@@ -11,10 +11,12 @@ import Card from 'primevue/card';
 import {useToast} from 'primevue/usetoast';
 import {useI18n} from 'vue-i18n';
 import {useClientOrdersStore} from '@/stores/clientOrders';
+import {useCartStore} from '@/stores/cart';
 import {useRouter} from 'vue-router';
 
 const toast = useToast();
 const router = useRouter();
+const cartStore = useCartStore();
 const { t, locale } = useI18n();
 const ordersStore = useClientOrdersStore();
 const { orders, pagination, loadingOrders, loadingOrderDetail, selectedOrder } = storeToRefs(ordersStore);
@@ -117,6 +119,45 @@ function statusLabel(status?: string | null) {
     const translated = t(key);
     return translated === key ? status : translated;
 }
+
+function reorder(order: any) {
+  if (!order || !order.items || !order.items.length) {
+    toast.add({
+      severity: 'warn',
+      summary: t('client.common.warn'),
+      detail: t('client.account.orders.toast.reorderEmpty', 'Cette commande ne contient pas d\'articles'),
+      life: 3000
+    });
+    return;
+  }
+
+  // Vider le panier actuel et ajouter les articles de la commande
+  cartStore.clear();
+
+  order.items.forEach((item: any) => {
+    cartStore.addItem(
+        {
+          id: item.product_id,
+          name: item.product_name || 'Produit',
+          slug: item.product_slug || String(item.product_id),
+          price: Number(item.unit_price || 0),
+          image_url: item.product_image_url
+        },
+        Number(item.quantity || 1)
+    );
+  });
+
+  toast.add({
+    severity: 'success',
+    summary: t('client.common.success'),
+    detail: t('client.account.orders.toast.reorderSuccess', 'Les articles ont été ajoutés au panier'),
+    life: 3000
+  });
+
+  // Fermer le dialogue et rediriger vers le panier
+  closeDialog();
+  router.push({name: 'client-cart'});
+}
 </script>
 
 <template>
@@ -213,6 +254,15 @@ function statusLabel(status?: string | null) {
                         <p class="item-total">{{ formatMoney(item.total) }}</p>
                     </div>
                 </div>
+
+              <div class="dialog-actions">
+                <Button
+                    :label="t('client.account.orders.dialog.reorder', 'Commander à nouveau')"
+                    icon="pi pi-refresh"
+                    severity="success"
+                    @click="reorder(selectedOrder)"
+                />
+              </div>
             </template>
             <p v-else class="text-sm text-muted-color">{{ t('client.account.orderDetail.notFound') }}</p>
         </Dialog>
@@ -303,5 +353,13 @@ function statusLabel(status?: string | null) {
 .item-total {
     font-weight: 600;
     margin: 0;
+}
+
+.dialog-actions {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--surface-border);
+  display: flex;
+  justify-content: flex-end;
 }
 </style>

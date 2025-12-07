@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { useI18n } from 'vue-i18n';
+import {computed} from 'vue';
+import {useRouter} from 'vue-router';
+import {useI18n} from 'vue-i18n';
 import Button from 'primevue/button';
 import Carousel from 'primevue/carousel';
 
@@ -14,26 +14,33 @@ const heroSlides = computed(() => [
         subtitle: t('client.hero.slides.kids.subtitle'),
         description: t('client.hero.slides.kids.description'),
         image: 'https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?w=1200&h=800&fit=crop',
-        cta: t('client.hero.slides.kids.cta')
+        cta: t('client.hero.slides.kids.cta'),
+        categoryKey: 'kids'
     },
     {
         title: t('client.hero.slides.women.title'),
         subtitle: t('client.hero.slides.women.subtitle'),
         description: t('client.hero.slides.women.description'),
         image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1200&h=800&fit=crop',
-        cta: t('client.hero.slides.women.cta')
+        cta: t('client.hero.slides.women.cta'),
+        categoryKey: 'women'
     },
     {
         title: t('client.hero.slides.men.title'),
         subtitle: t('client.hero.slides.men.subtitle'),
         description: t('client.hero.slides.men.description'),
         image: 'https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?w=1200&h=800&fit=crop',
-        cta: t('client.hero.slides.men.cta')
+        cta: t('client.hero.slides.men.cta'),
+        categoryKey: 'men'
     }
 ]);
 
-function goToShop() {
-    router.push({ name: 'client-catalog' });
+function goToShop(categoryKey?: string) {
+    if (categoryKey) {
+        router.push({name: 'client-catalog', query: {category: categoryKey}});
+    } else {
+        router.push({name: 'client-catalog'});
+    }
 }
 </script>
 
@@ -78,7 +85,7 @@ function goToShop() {
                                     iconPos="right"
                                     size="large"
                                     class="px-8 py-4 font-semibold text-lg"
-                                    @click="goToShop"
+                                    @click="goToShop(data.categoryKey)"
                                 />
                                 <Button
                                     :label="t('client.hero.viewAll')"
@@ -88,7 +95,7 @@ function goToShop() {
                                     outlined
                                     size="large"
                                     class="px-8 py-4 font-semibold text-lg bg-white-alpha-20"
-                                    @click="goToShop"
+                                    @click="goToShop()"
                                 />
                             </div>
                         </div>

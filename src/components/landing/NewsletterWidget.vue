@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useToast } from 'primevue/usetoast';
+import {computed, ref} from 'vue';
+import {useI18n} from 'vue-i18n';
+import {useToast} from 'primevue/usetoast';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 
@@ -10,7 +10,11 @@ const loading = ref(false);
 const errorMessage = ref('');
 const toast = useToast();
 const { t } = useI18n();
-const benefits = computed(() => t('client.newsletter.benefits', { returnObjects: true }) as string[]);
+
+const benefits = computed(() => {
+    const result = t('client.newsletter.benefits', {returnObjects: true});
+    return Array.isArray(result) ? result : [];
+});
 
 async function submit() {
     errorMessage.value = '';

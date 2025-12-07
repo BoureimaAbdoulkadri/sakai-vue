@@ -1,11 +1,12 @@
 <script setup>
-import { computed } from 'vue';
-import { storeToRefs } from 'pinia';
-import { useRouter, RouterLink } from 'vue-router';
-import { useI18n } from 'vue-i18n';
+import {computed} from 'vue';
+import {storeToRefs} from 'pinia';
+import {RouterLink, useRouter} from 'vue-router';
+import {useI18n} from 'vue-i18n';
 import Button from 'primevue/button';
-import { useClientAuthStore } from '@/stores/clientAuth';
+import {useClientAuthStore} from '@/stores/clientAuth';
 import ClientLanguageSwitcher from '@/components/client/ClientLanguageSwitcher.vue';
+import MiniCartDropdown from '@/components/client/MiniCartDropdown.vue';
 
 const router = useRouter();
 const clientAuth = useClientAuthStore();
@@ -46,6 +47,7 @@ async function handleLogout() {
 
         <div class="landing-topbar__actions">
             <ClientLanguageSwitcher />
+            <MiniCartDropdown/>
             <template v-if="!customer">
                 <Button
                     :label="t('client.topbar.actions.login')"

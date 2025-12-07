@@ -1,17 +1,20 @@
-import { ref } from 'vue';
-import { useToast } from 'primevue/usetoast';
-import { useI18n } from 'vue-i18n';
-import { postClientCheckout } from '@/services/client/checkoutService';
-import { useCartStore } from '@/stores/cart';
+import {onMounted, ref} from 'vue';
+import {useToast} from 'primevue/usetoast';
+import {useI18n} from 'vue-i18n';
+import {postClientCheckout} from '@/services/client/checkoutService';
+import {useCartStore} from '@/stores/cart';
+import {useClientProfileStore} from '@/stores/clientProfile';
 
 export function useClientCheckout() {
     const toast = useToast();
     const cartStore = useCartStore();
+    const clientProfileStore = useClientProfileStore();
     const { t } = useI18n();
 
     const loading = ref(false);
     const order = ref(null);
     const notes = ref('');
+    const step = ref(1); // 1: Info, 2: Livraison, 3: Paiement, 4: Confirmation
 
     const customerForm = ref({
         email: '',
@@ -34,6 +37,34 @@ export function useClientCheckout() {
         }
     });
 
+    const paymentMethod = ref('cod'); // cash on delivery par défaut
+
+    // Pré-remplir avec les données du profil si disponibles
+    onMounted(async () => {
+        try {
+            await clientProfileStore.fetchProfile();
+            const profile = clientProfileStore.profile;
+
+            if (profile) {
+                customerForm.value.email = profile.email || '';
+                customerForm.value.first_name = profile.first_name || '';
+                customerForm.value.last_name = profile.last_name || '';
+                customerForm.value.phone = profile.phone || '';
+
+                // Pré-remplir les adresses si disponibles
+                if (profile.default_billing_address) {
+                    Object.assign(customerForm.value.billing_address, profile.default_billing_address);
+                }
+                if (profile.default_shipping_address) {
+                    Object.assign(customerForm.value.shipping_address, profile.default_shipping_address);
+                }
+            }
+        } catch (error) {
+            // Silently fail if profile not available (user not logged in)
+            console.log('Profile not available for pre-fill');
+        }
+    });
+
     async function submitCheckout() {
         if (!cartStore.items.length) {
             toast.add({
@@ -51,10 +82,11 @@ export function useClientCheckout() {
             customer: customerForm.value,
             items: cartStore.items.map((item) => ({
                 product_id: item.product_id,
-                quantity: item.quantity
+                quantity: item.quantity,
+                size: item.size || undefined
             })),
             notes: notes.value || undefined,
-            payment_method: 'cod'
+            payment_method: paymentMethod.value
         };
 
         try {
@@ -81,11 +113,27 @@ export function useClientCheckout() {
         }
     }
 
+    function nextStep() {
+        if (step.value < 3) {
+            step.value++;
+        }
+    }
+
+    function prevStep() {
+        if (step.value > 1) {
+            step.value--;
+        }
+    }
+
     return {
         loading,
         order,
         notes,
         customerForm,
+        paymentMethod,
+        step,
+        nextStep,
+        prevStep,
         submitCheckout
     };
 }

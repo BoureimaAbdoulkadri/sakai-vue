@@ -6,9 +6,21 @@ import {useI18n} from 'vue-i18n';
 const router = useRouter();
 const { t } = useI18n();
 
-const collectionLinks = computed(() => t('client.footer.collections.items', { returnObjects: true }) as string[]);
-const serviceLinks = computed(() => t('client.footer.service.items', { returnObjects: true }) as string[]);
-const infoLinks = computed(() => t('client.footer.info.items', { returnObjects: true }) as string[]);
+const collectionLinks = computed(() => {
+    const result = t('client.footer.collections.items', {returnObjects: true});
+    return Array.isArray(result) ? result : [];
+});
+
+const serviceLinks = computed(() => {
+    const result = t('client.footer.service.items', {returnObjects: true});
+    return Array.isArray(result) ? result : [];
+});
+
+const infoLinks = computed(() => {
+    const result = t('client.footer.info.items', {returnObjects: true});
+    return Array.isArray(result) ? result : [];
+});
+
 const currentYear = new Date().getFullYear();
 </script>
 

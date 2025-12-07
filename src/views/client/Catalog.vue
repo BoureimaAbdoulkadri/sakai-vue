@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
-import { useI18n } from 'vue-i18n';
+import {computed, ref, watch} from 'vue';
+import {useRoute, useRouter} from 'vue-router';
+import {useI18n} from 'vue-i18n';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import Dropdown from 'primevue/dropdown';
 import Slider from 'primevue/slider';
 import Skeleton from 'primevue/skeleton';
-import { useToast } from 'primevue/usetoast';
-import { useClientProducts } from '@/composables/client/useClientProducts';
-import { useCartStore } from '@/stores/cart';
+import InputText from 'primevue/inputtext';
+import IconField from 'primevue/iconfield';
+import InputIcon from 'primevue/inputicon';
+import {useToast} from 'primevue/usetoast';
+import {useClientProducts} from '@/composables/client/useClientProducts';
+import {useCartStore} from '@/stores/cart';
 
 type CategoryKey = 'kids' | 'women' | 'men';
 type SortKey = 'newest' | 'price-asc' | 'price-desc';
@@ -26,11 +29,15 @@ interface NormalizedProduct {
 }
 
 const router = useRouter();
+const route = useRoute();
 const toast = useToast();
 const cartStore = useCartStore();
 const { t, locale } = useI18n();
 
 const { products, loading } = useClientProducts();
+
+const searchQuery = ref('');
+const searchDebounceTimer = ref<number | null>(null);
 
 const filterState = ref({
     categories: [] as CategoryKey[],
@@ -41,23 +48,87 @@ const filterState = ref({
 
 const mobileFiltersOpen = ref(false);
 
-const curatedProducts = computed<NormalizedProduct[]>(() => {
-    const fallback = t('client.catalog.selectionFallback', { returnObjects: true }) as Array<{
-        name: string;
-        category: string;
-        price: number;
-        image: string;
-    }>;
+// Initialiser les filtres depuis l'URL au montage
+watch(
+    () => route.query,
+    (query) => {
+        if (query.category && typeof query.category === 'string') {
+            const categoryKey = query.category as CategoryKey;
+            if (['kids', 'women', 'men'].includes(categoryKey) && !filterState.value.categories.includes(categoryKey)) {
+                filterState.value.categories = [categoryKey];
+            }
+        }
+        if (query.q && typeof query.q === 'string') {
+            searchQuery.value = query.q;
+        }
+        if (query.sort && typeof query.sort === 'string') {
+            filterState.value.sort = query.sort as SortKey;
+        }
+    },
+    {immediate: true}
+);
 
-    return fallback.map((item, index) => ({
+// Mettre à jour l'URL quand les filtres changent
+watch(
+    () => filterState.value.categories,
+    (categories) => {
+        const query = {...route.query};
+        if (categories.length === 1) {
+            query.category = categories[0];
+        } else if (categories.length === 0) {
+            delete query.category;
+        }
+        router.replace({query});
+    }
+);
+
+watch(
+    () => filterState.value.sort,
+    (sort) => {
+        const query = {...route.query};
+        if (sort && sort !== 'newest') {
+            query.sort = sort;
+        } else {
+            delete query.sort;
+        }
+        router.replace({query});
+    }
+);
+
+// Recherche avec debounce
+watch(searchQuery, (newValue) => {
+    if (searchDebounceTimer.value) {
+        clearTimeout(searchDebounceTimer.value);
+    }
+
+    searchDebounceTimer.value = window.setTimeout(() => {
+        const query = {...route.query};
+        if (newValue && newValue.trim()) {
+            query.q = newValue.trim();
+        } else {
+            delete query.q;
+        }
+        router.replace({query});
+    }, 300);
+});
+
+const curatedProducts = computed<NormalizedProduct[]>(() => {
+    const fallback = t('client.catalog.selectionFallback', {returnObjects: true});
+
+    // Si la clé de traduction n'existe pas ou n'est pas un tableau, retourner un tableau vide
+    if (!Array.isArray(fallback)) {
+        return [];
+    }
+
+    return fallback.map((item: any, index: number) => ({
         id: `curated-${index}`,
         slug: `curated-${index}`,
-        name: item.name,
+        name: item.name || 'Produit',
         categoryKey: null,
-        genderLabel: item.category,
-        price: item.price,
+        genderLabel: item.category || 'Collection',
+        price: Number(item.price || 0),
         isNew: false,
-        imageUrl: item.image
+        imageUrl: item.image || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=60'
     }));
 });
 
@@ -105,6 +176,15 @@ watch(
 const sortedProducts = computed(() => {
     let result = [...normalizedProducts.value];
 
+    // Filtre par recherche textuelle
+    if (searchQuery.value && searchQuery.value.trim()) {
+        const query = searchQuery.value.toLowerCase().trim();
+        result = result.filter((product) =>
+            product.name.toLowerCase().includes(query) ||
+            product.genderLabel.toLowerCase().includes(query)
+        );
+    }
+
     if (filterState.value.categories.length) {
         result = result.filter((product) => product.categoryKey && filterState.value.categories.includes(product.categoryKey));
     }
@@ -151,6 +231,8 @@ function resetFilters() {
     filterState.value.onlyNew = false;
     filterState.value.sort = 'newest';
     filterState.value.priceRange = [priceBounds.value.min, priceBounds.value.max];
+    searchQuery.value = '';
+    router.replace({query: {}});
 }
 
 const featuredProducts = computed(() => {
@@ -227,6 +309,16 @@ function categoryLabel(key: CategoryKey): string {
                         <span>{{ t('client.common.ctaFilters') }}</span>
                         <Button :label="t('client.common.ctaReset')" text size="small" @click="resetFilters" />
                     </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <p class="sidebar-label">{{ t('client.catalog.filters.search', 'Recherche') }}</p>
+                    <IconField>
+                        <InputIcon class="pi pi-search"/>
+                        <InputText v-model="searchQuery"
+                                   :placeholder="t('client.catalog.filters.searchPlaceholder', 'Rechercher un produit...')"
+                                   fluid/>
+                    </IconField>
                 </div>
 
                 <div class="sidebar-section">

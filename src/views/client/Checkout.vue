@@ -1,20 +1,51 @@
 <script setup>
-import { computed } from 'vue';
-import { useRouter, RouterLink } from 'vue-router';
-import { useI18n } from 'vue-i18n';
+import {computed} from 'vue';
+import {RouterLink, useRouter} from 'vue-router';
+import {useI18n} from 'vue-i18n';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import Divider from 'primevue/divider';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import FloatLabel from 'primevue/floatlabel';
-import { useCartStore } from '@/stores/cart';
-import { useClientCheckout } from '@/composables/client/useClientCheckout';
+import {useCartStore} from '@/stores/cart';
+import {useClientCheckout} from '@/composables/client/useClientCheckout';
 
 const cartStore = useCartStore();
 const router = useRouter();
 const { t, locale } = useI18n();
-const { loading, order, notes, customerForm, submitCheckout } = useClientCheckout();
+const {
+    loading,
+    order,
+    notes,
+    customerForm,
+    paymentMethod,
+    step,
+    nextStep,
+    prevStep,
+    submitCheckout
+} = useClientCheckout();
+
+const paymentMethods = computed(() => [
+    {
+        value: 'cod',
+        label: t('client.checkout.payment.cod', 'Paiement à la livraison'),
+        description: t('client.checkout.payment.codDesc', 'Payez en espèces à la réception de votre commande'),
+        available: true
+    },
+    {
+        value: 'card',
+        label: t('client.checkout.payment.card', 'Carte bancaire'),
+        description: t('client.checkout.payment.cardDesc', 'Bientôt disponible'),
+        available: false
+    },
+    {
+        value: 'paypal',
+        label: t('client.checkout.payment.paypal', 'PayPal'),
+        description: t('client.checkout.payment.paypalDesc', 'Bientôt disponible'),
+        available: false
+    }
+]);
 
 const hasItems = computed(() => cartStore.items.length > 0);
 

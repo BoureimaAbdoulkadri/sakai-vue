@@ -5,6 +5,7 @@ import {useI18n} from 'vue-i18n';
 import {useToast} from 'primevue/usetoast';
 import {useClientProductDetail} from '@/composables/client/useClientProductDetail';
 import {useCartStore} from '@/stores/cart';
+import {useRecentlyViewed} from '@/composables/client/useRecentlyViewed';
 
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
@@ -19,13 +20,21 @@ const cartStore = useCartStore();
 const { t, locale } = useI18n();
 
 const { product, loading, loadProduct } = useClientProductDetail();
+const {addProduct: addToRecentlyViewed} = useRecentlyViewed();
 
 const quantity = ref(1);
 const sizeOptions = ['XS', 'S', 'M', 'L', 'XL'];
 const selectedSize = ref(null);
 
-const highlights = computed(() => t('client.product.highlights', { returnObjects: true }) as string[]);
-const guaranteeColumns = computed(() => t('client.product.guarantees', { returnObjects: true }) as Array<{ title: string; text: string }>);
+const highlights = computed(() => {
+    const result = t('client.product.highlights', {returnObjects: true});
+    return Array.isArray(result) ? result : [];
+});
+
+const guaranteeColumns = computed(() => {
+    const result = t('client.product.guarantees', {returnObjects: true});
+    return Array.isArray(result) ? result : [];
+});
 
 const priceFormatter = computed(
     () =>
@@ -57,8 +66,24 @@ function addToCart() {
         quantity.value = 1;
     }
 
-    // Optionnel : vérifier selectedSize, mais non stocké pour l'instant
-    cartStore.addItem(product.value, quantity.value);
+    // Optionnel : vérifier selectedSize si souhaité
+    if (!selectedSize.value) {
+        toast.add({
+            severity: 'warn',
+            summary: t('client.product.toast.warnTitle', 'Attention'),
+            detail: t('client.product.toast.warnSize', 'Veuillez sélectionner une taille'),
+            life: 3000
+        });
+        return;
+    }
+
+    cartStore.addItem(
+        {
+            ...product.value,
+            size: selectedSize.value
+        },
+        quantity.value
+    );
 
     toast.add({
         severity: 'success',
@@ -79,6 +104,22 @@ watch(
     (slug) => {
         if (slug) {
             loadProduct(slug);
+        }
+    }
+);
+
+// Sauvegarder le produit consulté
+watch(
+    product,
+    (newProduct) => {
+        if (newProduct && newProduct.id) {
+            addToRecentlyViewed({
+                id: newProduct.id,
+                slug: newProduct.slug || String(newProduct.id),
+                name: newProduct.name || 'Produit',
+                price: Number(newProduct.price || 0),
+                image_url: newProduct.image_url
+            });
         }
     }
 );
